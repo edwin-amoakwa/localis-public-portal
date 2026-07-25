@@ -1,0 +1,202 @@
+<div class="page-header">
+  <div>
+    <h1>Payments</h1>
+    <p>Your invoices, receipts and payment history.</p>
+  </div>
+</div>
+
+<!-- Summary ---------------------------------------------------------------- -->
+<section class="pay-summary">
+  <div class="asp-card pay-summary__card pay-summary__card--due">
+    <span class="label">Outstanding</span>
+    <strong>{{ portal.outstandingTotal() | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
+    <small>{{ outstanding().length }} invoice(s) awaiting payment</small>
+  </div>
+  <div class="asp-card pay-summary__card">
+    <span class="label">Paid this year</span>
+    <strong>{{ portal.completedPaymentsTotal() | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
+    <small>across {{ receipts().length }} receipt(s)</small>
+  </div>
+  <div class="asp-card pay-summary__card">
+    <span class="label">Settled invoices</span>
+    <strong>{{ paid().length }}</strong>
+    <small>fully paid</small>
+  </div>
+</section>
+
+<p-tabs value="0">
+  <p-tablist>
+    <p-tab value="0">
+      Outstanding
+      @if (outstanding().length > 0) {
+        <span class="tab-count">{{ outstanding().length }}</span>
+      }
+    </p-tab>
+    <p-tab value="1">Paid invoices</p-tab>
+    <p-tab value="2">Receipts</p-tab>
+  </p-tablist>
+
+  <p-tabpanels>
+    <!-- Outstanding ------------------------------------------------------- -->
+    <p-tabpanel value="0">
+      @if (outstanding().length === 0) {
+        <div class="asp-card empty">
+          <i class="pi pi-check-circle"></i>
+          <h3>Nothing outstanding</h3>
+          <p class="section-muted mb-0">Every invoice on your account has been settled.</p>
+        </div>
+      } @else {
+        <div class="invoice-grid">
+          @for (invoice of outstanding(); track invoice.id) {
+            <article class="asp-card invoice-card">
+              <header>
+                <div>
+                  <span class="mono">{{ invoice.invoiceNumber }}</span>
+                  <h3>{{ invoice.description }}</h3>
+                </div>
+                <p-tag
+                  [value]="statusLabel(invoice.status)"
+                  [severity]="statusSeverity(invoice.status)"
+                />
+              </header>
+
+              <ul class="invoice-card__items">
+                @for (item of invoice.items; track item.name) {
+                  <li>
+                    <span>{{ item.name }}</span>
+                    <span>{{ item.amount | currency: 'GHS ' : 'symbol' : '1.2-2' }}</span>
+                  </li>
+                }
+              </ul>
+
+              <dl class="invoice-card__figures">
+                <div>
+                  <dt>Total</dt>
+                  <dd>{{ invoice.total | currency: 'GHS ' : 'symbol' : '1.2-2' }}</dd>
+                </div>
+                <div>
+                  <dt>Paid</dt>
+                  <dd>{{ invoice.paid | currency: 'GHS ' : 'symbol' : '1.2-2' }}</dd>
+                </div>
+                <div>
+                  <dt>Balance</dt>
+                  <dd class="due">
+                    {{ invoice.total - invoice.paid | currency: 'GHS ' : 'symbol' : '1.2-2' }}
+                  </dd>
+                </div>
+              </dl>
+
+              <footer>
+                <span class="invoice-card__due">
+                  <i class="pi pi-calendar"></i>
+                  Due {{ invoice.dueDate | date: 'd MMM y' }}
+                </span>
+                <p-button
+                  label="Pay now"
+                  icon="pi pi-credit-card"
+                  [routerLink]="['/app/payments/pay', invoice.id]"
+                />
+              </footer>
+            </article>
+          }
+        </div>
+      }
+    </p-tabpanel>
+
+    <!-- Paid -------------------------------------------------------------- -->
+    <p-tabpanel value="1">
+      <div class="asp-card asp-card--flush">
+        <p-table [value]="paid()" styleClass="p-datatable-sm" responsiveLayout="scroll">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Invoice</th>
+              <th>Description</th>
+              <th>Issued</th>
+              <th>Status</th>
+              <th class="text-right">Amount</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-invoice>
+            <tr>
+              <td class="mono">{{ invoice.invoiceNumber }}</td>
+              <td>
+                {{ invoice.description }}
+                @if (invoice.applicationNumber) {
+                  <small class="cell-sub">{{ invoice.applicationNumber }}</small>
+                }
+              </td>
+              <td>{{ invoice.issuedDate | date: 'd MMM y' }}</td>
+              <td>
+                <p-tag
+                  [value]="statusLabel(invoice.status)"
+                  [severity]="statusSeverity(invoice.status)"
+                />
+              </td>
+              <td class="text-right">
+                <strong>{{ invoice.total | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="5" class="text-center section-muted">No settled invoices yet.</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </p-tabpanel>
+
+    <!-- Receipts ---------------------------------------------------------- -->
+    <p-tabpanel value="2">
+      <div class="asp-card asp-card--flush">
+        <p-table [value]="receipts()" styleClass="p-datatable-sm" responsiveLayout="scroll">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Receipt</th>
+              <th>Description</th>
+              <th>Paid</th>
+              <th>Method</th>
+              <th class="text-right">Amount</th>
+              <th></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-receipt>
+            <tr>
+              <td class="mono">{{ receipt.receiptNumber }}</td>
+              <td>
+                {{ receipt.description }}
+                <small class="cell-sub">against {{ receipt.invoiceNumber }}</small>
+              </td>
+              <td>{{ receipt.paidDate | date: 'd MMM y' }}</td>
+              <td>
+                <span class="method">
+                  <i [class]="methodIcon(receipt.method)"></i>
+                  {{ methodLabel(receipt.method) }}
+                </span>
+              </td>
+              <td class="text-right">
+                <strong>{{ receipt.amount | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
+              </td>
+              <td class="text-right">
+                <p-button
+                  label="View"
+                  severity="secondary"
+                  [text]="true"
+                  size="small"
+                  icon="pi pi-angle-right"
+                  iconPos="right"
+                  [routerLink]="['/app/payments/receipt', receipt.id]"
+                />
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="6" class="text-center section-muted">No receipts yet.</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </p-tabpanel>
+  </p-tabpanels>
+</p-tabs>

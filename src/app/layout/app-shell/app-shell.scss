@@ -1,0 +1,350 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: var(--asp-surface);
+}
+
+// --- Top bar -----------------------------------------------------------------
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 70;
+  height: var(--asp-topbar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 1.25rem;
+  background: var(--asp-card);
+  border-bottom: 1px solid var(--asp-line);
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  &__burger {
+    display: none;
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    flex: 1;
+    justify-content: center;
+
+    a {
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--asp-radius-sm);
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--asp-ink-600);
+      white-space: nowrap;
+
+      &:hover {
+        background: var(--asp-blue-050);
+        color: var(--asp-blue-700);
+        text-decoration: none;
+      }
+
+      &.is-active {
+        background: var(--asp-blue-100);
+        color: var(--asp-blue-700);
+      }
+    }
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--asp-ink);
+  font-weight: 800;
+  font-size: 0.98rem;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  min-width: 0;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &__mark {
+    display: inline-flex;
+    flex: none;
+  }
+
+  &__text {
+    min-width: 0;
+
+    small {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: var(--asp-ink-400);
+      margin-top: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+.icon-btn {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: inline-grid;
+  place-items: center;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--asp-ink-600);
+  font-size: 1.05rem;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--asp-surface);
+    color: var(--asp-blue-700);
+    text-decoration: none;
+  }
+
+  &__dot {
+    position: absolute;
+    top: 4px;
+    right: 3px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #c0342c;
+    color: #fff;
+    font-size: 0.66rem;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+  }
+}
+
+.profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.3rem 0.55rem 0.3rem 0.3rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--asp-ink);
+  cursor: pointer;
+  font: inherit;
+
+  &:hover {
+    background: var(--asp-surface);
+    border-color: var(--asp-line);
+  }
+
+  ::ng-deep .profile-btn__avatar {
+    background: var(--asp-blue-700);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.82rem;
+    width: 34px;
+    height: 34px;
+  }
+
+  &__name {
+    text-align: left;
+    font-size: 0.88rem;
+    font-weight: 650;
+    line-height: 1.15;
+
+    small {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--asp-ink-400);
+      text-transform: capitalize;
+    }
+  }
+
+  i {
+    color: var(--asp-ink-400);
+    font-size: 0.8rem;
+  }
+}
+
+// --- Body --------------------------------------------------------------------
+.shell-body {
+  display: flex;
+  align-items: flex-start;
+  min-height: calc(100vh - var(--asp-topbar-height));
+}
+
+.sidebar {
+  position: sticky;
+  top: var(--asp-topbar-height);
+  flex: none;
+  width: var(--asp-sidebar-width);
+  height: calc(100vh - var(--asp-topbar-height));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 0.85rem;
+  background: var(--asp-card);
+  border-right: 1px solid var(--asp-line);
+  overflow-y: auto;
+
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.66rem 0.8rem;
+    border-radius: var(--asp-radius-sm);
+    color: var(--asp-ink-600);
+    font-size: 0.93rem;
+    font-weight: 600;
+
+    i {
+      font-size: 1rem;
+      width: 20px;
+      text-align: center;
+      flex: none;
+    }
+
+    span {
+      flex: 1;
+      min-width: 0;
+    }
+
+    &:hover {
+      background: var(--asp-surface);
+      color: var(--asp-blue-700);
+      text-decoration: none;
+    }
+
+    &.is-active {
+      background: var(--asp-blue-100);
+      color: var(--asp-blue-700);
+      font-weight: 700;
+    }
+  }
+
+  &__badge {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: #c0342c;
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+  }
+
+  &__promo {
+    display: flex;
+    gap: 0.6rem;
+    padding: 0.9rem;
+    border-radius: var(--asp-radius-sm);
+    background: var(--asp-gold-100);
+    color: var(--asp-gold-700);
+    font-size: 0.8rem;
+
+    i {
+      font-size: 1rem;
+      margin-top: 2px;
+    }
+
+    strong {
+      display: block;
+      color: var(--asp-gold-700);
+      margin-bottom: 0.15rem;
+    }
+
+    p {
+      margin: 0;
+      line-height: 1.4;
+    }
+  }
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  padding: 1.6rem;
+  padding-bottom: 5rem;
+}
+
+// --- Responsive --------------------------------------------------------------
+@media (max-width: 1180px) {
+  .topbar__nav {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .topbar {
+    padding: 0 0.9rem;
+
+    &__burger {
+      display: inline-grid;
+    }
+  }
+
+  .profile-btn__name {
+    display: none;
+  }
+
+  .brand__text small {
+    display: none;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: var(--asp-topbar-height);
+    left: 0;
+    z-index: 65;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    box-shadow: var(--asp-shadow);
+
+    &.is-open {
+      transform: none;
+    }
+  }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: var(--asp-topbar-height) 0 0 0;
+    z-index: 60;
+    background: rgba(16, 26, 36, 0.45);
+  }
+
+  .content {
+    padding: 1.1rem;
+    padding-bottom: 5rem;
+  }
+}

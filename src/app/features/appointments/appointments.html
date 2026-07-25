@@ -1,0 +1,190 @@
+<div class="page-header">
+  <div>
+    <h1>Appointments</h1>
+    <p>Inspections, meetings and officer visits arranged with your Assembly.</p>
+  </div>
+</div>
+
+<p-tabs value="0">
+  <p-tablist>
+    <p-tab value="0">
+      Upcoming
+      @if (upcoming().length > 0) {
+        <span class="tab-count">{{ upcoming().length }}</span>
+      }
+    </p-tab>
+    <p-tab value="1">Calendar</p-tab>
+    <p-tab value="2">Past</p-tab>
+  </p-tablist>
+
+  <p-tabpanels>
+    <!-- Upcoming ---------------------------------------------------------- -->
+    <p-tabpanel value="0">
+      @if (upcoming().length === 0) {
+        <div class="asp-card empty">
+          <i class="pi pi-calendar"></i>
+          <h3>Nothing scheduled</h3>
+          <p class="section-muted mb-0">
+            You have no upcoming appointments. You will be notified when one is arranged.
+          </p>
+        </div>
+      } @else {
+        <div class="appointment-list">
+          @for (appointment of upcoming(); track appointment.id) {
+            <article class="asp-card appointment">
+              <div class="appointment__date">
+                <strong>{{ appointment.date | date: 'd' }}</strong>
+                <small>{{ appointment.date | date: 'MMM y' }}</small>
+              </div>
+
+              <div class="appointment__body">
+                <div class="appointment__head">
+                  <span class="appointment__kind" [class]="kindTint(appointment.kind)">
+                    <i [class]="kindIcon(appointment.kind)"></i>
+                    {{ kindLabel(appointment.kind) }}
+                  </span>
+                  <p-tag
+                    [value]="appointment.status | lowercase"
+                    [severity]="statusSeverity(appointment.status)"
+                    styleClass="text-tiny appointment__status"
+                  />
+                </div>
+
+                <h3>{{ appointment.title }}</h3>
+
+                <dl class="appointment__meta">
+                  <div><dt><i class="pi pi-clock"></i></dt><dd>{{ appointment.time }}</dd></div>
+                  <div><dt><i class="pi pi-map-marker"></i></dt><dd>{{ appointment.location }}</dd></div>
+                  <div><dt><i class="pi pi-user"></i></dt><dd>{{ appointment.officer }}</dd></div>
+                  <div><dt><i class="pi pi-hashtag"></i></dt><dd class="mono">{{ appointment.reference }}</dd></div>
+                </dl>
+
+                @if (appointment.notes) {
+                  <p class="appointment__note">
+                    <i class="pi pi-info-circle"></i>
+                    {{ appointment.notes }}
+                  </p>
+                }
+              </div>
+
+              <div class="appointment__actions">
+                <p-button
+                  label="Add to calendar"
+                  icon="pi pi-calendar-plus"
+                  size="small"
+                  severity="secondary"
+                  [outlined]="true"
+                  (onClick)="addToCalendar(appointment)"
+                />
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </p-tabpanel>
+
+    <!-- Calendar ---------------------------------------------------------- -->
+    <p-tabpanel value="1">
+      <section class="asp-card calendar-card">
+        <header class="calendar-head">
+          <p-button
+            icon="pi pi-chevron-left"
+            severity="secondary"
+            [text]="true"
+            [rounded]="true"
+            ariaLabel="Previous month"
+            (onClick)="shiftMonth(-1)"
+          />
+          <h2>{{ monthLabel() }}</h2>
+          <p-button
+            icon="pi pi-chevron-right"
+            severity="secondary"
+            [text]="true"
+            [rounded]="true"
+            ariaLabel="Next month"
+            (onClick)="shiftMonth(1)"
+          />
+        </header>
+
+        <div class="calendar-grid" role="grid">
+          @for (day of weekdays; track day) {
+            <div class="calendar-grid__weekday" role="columnheader">{{ day }}</div>
+          }
+
+          @for (cell of calendar(); track $index) {
+            <div
+              class="calendar-cell"
+              [class.is-empty]="!cell.inMonth"
+              [class.is-today]="cell.isToday"
+              [class.has-events]="cell.appointments.length > 0"
+              role="gridcell"
+            >
+              @if (cell.date) {
+                <span class="calendar-cell__number">{{ cell.date | date: 'd' }}</span>
+
+                @for (appointment of cell.appointments; track appointment.id) {
+                  <span class="calendar-event" [class]="kindTint(appointment.kind)">
+                    <i [class]="kindIcon(appointment.kind)"></i>
+                    {{ appointment.title }}
+                  </span>
+                }
+              }
+            </div>
+          }
+        </div>
+
+        <footer class="calendar-legend">
+          <span><i class="dot tint-gold"></i> Inspection</span>
+          <span><i class="dot tint-blue"></i> Meeting</span>
+          <span><i class="dot tint-green"></i> Officer visit</span>
+        </footer>
+      </section>
+    </p-tabpanel>
+
+    <!-- Past -------------------------------------------------------------- -->
+    <p-tabpanel value="2">
+      @if (past().length === 0) {
+        <div class="asp-card empty">
+          <i class="pi pi-history"></i>
+          <h3>No past appointments</h3>
+          <p class="section-muted mb-0">Completed appointments will appear here.</p>
+        </div>
+      } @else {
+        <div class="appointment-list">
+          @for (appointment of past(); track appointment.id) {
+            <article class="asp-card appointment appointment--past">
+              <div class="appointment__date">
+                <strong>{{ appointment.date | date: 'd' }}</strong>
+                <small>{{ appointment.date | date: 'MMM y' }}</small>
+              </div>
+              <div class="appointment__body">
+                <div class="appointment__head">
+                  <span class="appointment__kind tint-grey">
+                    <i [class]="kindIcon(appointment.kind)"></i>
+                    {{ kindLabel(appointment.kind) }}
+                  </span>
+                  <p-tag
+                    [value]="appointment.status | lowercase"
+                    [severity]="statusSeverity(appointment.status)"
+                    styleClass="text-tiny appointment__status"
+                  />
+                </div>
+                <h3>{{ appointment.title }}</h3>
+                <dl class="appointment__meta">
+                  <div><dt><i class="pi pi-clock"></i></dt><dd>{{ appointment.time }}</dd></div>
+                  <div><dt><i class="pi pi-user"></i></dt><dd>{{ appointment.officer }}</dd></div>
+                </dl>
+                @if (appointment.notes) {
+                  <p class="appointment__note appointment__note--done">
+                    <i class="pi pi-check-circle"></i>
+                    {{ appointment.notes }}
+                  </p>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </p-tabpanel>
+  </p-tabpanels>
+</p-tabs>

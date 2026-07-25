@@ -1,0 +1,286 @@
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+  border-top: 4px solid var(--asp-blue-700);
+
+  ::ng-deep .identity__avatar {
+    width: 68px;
+    height: 68px;
+    flex: none;
+    background: var(--asp-blue-700);
+    color: #fff;
+    font-size: 1.4rem;
+    font-weight: 800;
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+
+    h2 {
+      font-size: 1.35rem;
+      margin-bottom: 0.15rem;
+    }
+
+    p {
+      color: var(--asp-ink-500);
+      font-size: 0.9rem;
+      margin-bottom: 0.6rem;
+    }
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  &__meta {
+    display: flex;
+    gap: 2rem;
+    margin: 0;
+    flex: none;
+
+    dt {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--asp-ink-400);
+      margin-bottom: 0.15rem;
+    }
+
+    dd {
+      margin: 0;
+      font-size: 0.9rem;
+      font-weight: 650;
+    }
+  }
+}
+
+.mono {
+  font-variant-numeric: tabular-nums;
+}
+
+// --- Panels ------------------------------------------------------------------
+.panel {
+  margin-top: 1rem;
+
+  h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.35rem;
+  }
+
+  > p.section-muted {
+    margin-bottom: 1.5rem;
+  }
+
+  &--narrow {
+    max-width: 620px;
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+
+  &--full {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    font-size: 0.86rem;
+    font-weight: 650;
+    margin-bottom: 0.35rem;
+  }
+
+  input {
+    width: 100%;
+  }
+}
+
+.form-grid .field {
+  margin-bottom: 0;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 0.5rem;
+}
+
+// --- Records -----------------------------------------------------------------
+.record-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+.record {
+  header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.9rem;
+  }
+
+  &__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 1.1rem;
+  }
+
+  h3 {
+    font-size: 1.05rem;
+    margin-bottom: 0.2rem;
+  }
+
+  &__ref {
+    font-size: 0.82rem;
+    color: var(--asp-ink-400);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 1rem;
+  }
+
+  &__meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem 1.25rem;
+    margin: 0;
+
+    dt {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--asp-ink-400);
+      margin-bottom: 0.1rem;
+    }
+
+    dd {
+      margin: 0;
+      font-size: 0.88rem;
+      font-weight: 650;
+
+      &.due {
+        color: #c0342c;
+      }
+    }
+  }
+}
+
+// --- Security ----------------------------------------------------------------
+.security-note {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+  padding: 1rem 1.15rem;
+  border-radius: var(--asp-radius-sm);
+  background: var(--asp-blue-050);
+  color: var(--asp-blue-800);
+
+  i {
+    font-size: 1.15rem;
+    margin-top: 2px;
+  }
+
+  strong {
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.87rem;
+    line-height: 1.5;
+  }
+}
+
+// --- Preferences -------------------------------------------------------------
+.pref-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.25rem;
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--asp-line);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    strong {
+      display: block;
+      font-size: 0.95rem;
+    }
+
+    small {
+      color: var(--asp-ink-400);
+      font-size: 0.83rem;
+    }
+  }
+}
+
+.empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem 1.5rem;
+
+  i {
+    font-size: 2.2rem;
+    color: var(--asp-ink-400);
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+}
+
+// --- Responsive --------------------------------------------------------------
+@media (max-width: 980px) {
+  .identity {
+    flex-wrap: wrap;
+
+    &__meta {
+      width: 100%;
+      padding-top: 1rem;
+      border-top: 1px solid var(--asp-line);
+    }
+  }
+
+  .record-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .form-grid,
+  .record__meta {
+    grid-template-columns: 1fr;
+  }
+
+  .identity {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .pref-list li {
+    gap: 1rem;
+  }
+}

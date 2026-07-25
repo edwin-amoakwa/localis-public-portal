@@ -1,0 +1,101 @@
+<div class="page-header">
+  <div>
+    <h1>Documents</h1>
+    <p>Every permit, certificate, receipt and notice issued to you.</p>
+  </div>
+</div>
+
+@if (expiring().length > 0) {
+  <section class="asp-card expiry-banner">
+    <span class="expiry-banner__icon"><i class="pi pi-clock"></i></span>
+    <div>
+      <strong>{{ expiring().length }} document(s) expiring soon</strong>
+      <p>
+        @for (doc of expiring(); track doc.id) {
+          {{ doc.name }} expires {{ doc.expiryDate | date: 'd MMMM y' }}.
+        }
+        Renew in good time to stay compliant.
+      </p>
+    </div>
+  </section>
+}
+
+<section class="asp-card filters">
+  <span class="search-wrap">
+    <i class="pi pi-search" aria-hidden="true"></i>
+    <input
+      pInputText
+      type="search"
+      [ngModel]="term()"
+      (ngModelChange)="term.set($event)"
+      placeholder="Search by name or reference"
+      aria-label="Search documents"
+    />
+  </span>
+
+  <p-select
+    [options]="kindOptions"
+    optionLabel="label"
+    optionValue="value"
+    [ngModel]="kind()"
+    (ngModelChange)="kind.set($event)"
+    placeholder="All document types"
+    [showClear]="true"
+    styleClass="kind-filter"
+    appendTo="body"
+  />
+
+  @if (term() || kind()) {
+    <p-button label="Clear" severity="secondary" [text]="true" (onClick)="clear()" />
+  }
+</section>
+
+<section class="doc-grid">
+  @for (doc of documents(); track doc.id) {
+    <article class="asp-card doc-card">
+      <header>
+        <span class="doc-card__icon" [class]="tint(doc.kind)">
+          <i [class]="icon(doc.kind)"></i>
+        </span>
+        <p-tag
+          [value]="statusLabel(doc.status)"
+          [severity]="statusSeverity(doc.status)"
+          styleClass="text-tiny"
+        />
+      </header>
+
+      <h3>{{ doc.name }}</h3>
+      <p class="doc-card__ref">{{ doc.reference }}</p>
+
+      <dl class="doc-card__meta">
+        <div>
+          <dt>Issued</dt>
+          <dd>{{ doc.issuedDate | date: 'd MMM y' }}</dd>
+        </div>
+        <div>
+          <dt>Expires</dt>
+          <dd>{{ doc.expiryDate ? (doc.expiryDate | date: 'd MMM y') : 'No expiry' }}</dd>
+        </div>
+      </dl>
+
+      <footer>
+        <span class="doc-card__size">PDF &middot; {{ doc.sizeLabel }}</span>
+        <p-button
+          label="Download"
+          icon="pi pi-download"
+          size="small"
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="download(doc)"
+        />
+      </footer>
+    </article>
+  } @empty {
+    <div class="asp-card empty">
+      <i class="pi pi-folder-open"></i>
+      <h3>No documents match your filter</h3>
+      <p class="section-muted">Try a different search, or clear the filter.</p>
+      <p-button label="Clear filter" severity="secondary" [outlined]="true" (onClick)="clear()" />
+    </div>
+  }
+</section>

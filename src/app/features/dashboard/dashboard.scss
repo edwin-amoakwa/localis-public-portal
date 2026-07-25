@@ -1,0 +1,311 @@
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-size: 1.05rem;
+  margin: 1.75rem 0 0.85rem;
+}
+
+.action-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid var(--asp-gold-600);
+  background: var(--asp-gold-100);
+  border-color: var(--asp-gold-600);
+
+  &__icon {
+    width: 42px;
+    height: 42px;
+    flex: none;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.6);
+    color: var(--asp-gold-700);
+    font-size: 1.2rem;
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+
+    strong {
+      display: block;
+      color: var(--asp-gold-700);
+    }
+
+    p {
+      margin: 0.15rem 0 0;
+      font-size: 0.9rem;
+      color: var(--asp-gold-700);
+    }
+  }
+}
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.quick-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1.1rem;
+  color: var(--asp-ink);
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    border-color 0.16s ease;
+
+  &:hover {
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: var(--asp-shadow);
+    border-color: var(--asp-blue-100);
+  }
+
+  &__icon {
+    width: 42px;
+    height: 42px;
+    flex: none;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 1.05rem;
+  }
+
+  strong {
+    display: block;
+    font-size: 0.95rem;
+  }
+
+  small {
+    color: var(--asp-ink-400);
+    font-size: 0.8rem;
+  }
+
+  &__chevron {
+    margin-left: auto;
+    color: var(--asp-ink-400);
+  }
+}
+
+.split-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: start;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.15rem 1.4rem;
+  border-bottom: 1px solid var(--asp-line);
+
+  h2 {
+    font-size: 1.02rem;
+    margin: 0;
+  }
+
+  a {
+    font-size: 0.87rem;
+    font-weight: 600;
+  }
+
+  &--plain {
+    padding: 0 0 0.9rem;
+  }
+}
+
+.mono {
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+}
+
+.cell-sub {
+  display: block;
+  color: var(--asp-ink-400);
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+
+// --- Activity ----------------------------------------------------------------
+.activity-list,
+.notice-list,
+.appointment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.activity-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--asp-line);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  time {
+    margin-left: auto;
+    font-size: 0.78rem;
+    color: var(--asp-ink-400);
+    white-space: nowrap;
+  }
+}
+
+.activity-list__icon {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 0.85rem;
+}
+
+.activity-list__body {
+  min-width: 0;
+
+  strong {
+    display: block;
+    font-size: 0.9rem;
+  }
+
+  small {
+    color: var(--asp-ink-400);
+    font-size: 0.8rem;
+  }
+}
+
+// --- Notifications -----------------------------------------------------------
+.notice-list li {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--asp-line);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  p {
+    margin: 0.2rem 0;
+    font-size: 0.86rem;
+    color: var(--asp-ink-500);
+  }
+
+  time {
+    font-size: 0.76rem;
+    color: var(--asp-ink-400);
+  }
+
+  &.is-unread strong {
+    color: var(--asp-blue-700);
+  }
+}
+
+.notice-list__head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  strong {
+    font-size: 0.9rem;
+  }
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #c0342c;
+  flex: none;
+}
+
+// --- Appointments ------------------------------------------------------------
+.appointment-list li {
+  display: flex;
+  gap: 0.85rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--asp-line);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.appointment-list__date {
+  width: 46px;
+  flex: none;
+  text-align: center;
+  border-radius: 10px;
+  padding: 0.35rem 0;
+  background: var(--asp-blue-100);
+  color: var(--asp-blue-700);
+
+  strong {
+    display: block;
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
+  small {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+}
+
+.appointment-list__body {
+  min-width: 0;
+
+  strong {
+    display: block;
+    font-size: 0.9rem;
+  }
+
+  small {
+    color: var(--asp-ink-400);
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+}
+
+// --- Responsive --------------------------------------------------------------
+@media (max-width: 1280px) {
+  .tiles,
+  .quick-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .split-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .tiles,
+  .quick-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

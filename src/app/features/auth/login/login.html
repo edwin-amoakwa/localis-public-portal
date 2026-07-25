@@ -1,0 +1,134 @@
+<div class="auth">
+  <aside class="auth__aside">
+    <span class="auth__brand">
+      <svg viewBox="0 0 64 64" width="40" height="40" aria-hidden="true">
+        <rect width="64" height="64" rx="15" fill="#ffffff" />
+        <path d="M32 12 51 22H13z" fill="#0F4C81" />
+        <rect x="17" y="26" width="5" height="18" rx="1" fill="#0F4C81" />
+        <rect x="26" y="26" width="5" height="18" rx="1" fill="#0F4C81" />
+        <rect x="35" y="26" width="5" height="18" rx="1" fill="#0F4C81" />
+        <rect x="44" y="26" width="5" height="18" rx="1" fill="#0F4C81" />
+        <rect x="12" y="47" width="40" height="5" rx="2" fill="#0E9F6E" />
+      </svg>
+      <span>
+        Assembly Services Portal
+        <small>Republic of Ghana &middot; MMDAs</small>
+      </span>
+    </span>
+
+    <div>
+      <h2>Your District Assembly, online.</h2>
+      <p>
+        Apply for permits, pay your rates, track every application and download your certificates —
+        without joining a queue.
+      </p>
+      <ul class="auth__points">
+        <li>One account for every district you deal with</li>
+        <li>See the fee before you commit</li>
+        <li>Pay by mobile money, card, bank transfer or QR code</li>
+        <li>Certificates issued digitally and verifiable by anyone</li>
+      </ul>
+    </div>
+
+    <p class="auth__aside-foot">
+      The Digital Operating System for Ghana&rsquo;s District Assemblies.
+    </p>
+  </aside>
+
+  <div class="auth__main">
+    <form class="auth__form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <h1>Sign in</h1>
+      <p>Welcome back. Enter your details to continue.</p>
+
+      <div class="field">
+        <label for="email">Email address <span class="req" aria-hidden="true">*</span></label>
+        <input
+          pInputText
+          id="email"
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+          placeholder="you@example.com"
+        />
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <small class="field-error">Enter a valid email address.</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="password">Password <span class="req" aria-hidden="true">*</span></label>
+        <p-password
+          inputId="password"
+          formControlName="password"
+          [feedback]="false"
+          [toggleMask]="true"
+          styleClass="w-full"
+          [inputStyle]="{ width: '100%' }"
+          placeholder="Your password"
+        />
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <small class="field-error">Your password must be at least 6 characters.</small>
+        }
+      </div>
+
+      <div class="auth__row">
+        <label class="auth__checkbox">
+          <p-checkbox formControlName="remember" [binary]="true" inputId="remember" />
+          <span>Remember me</span>
+        </label>
+        <a href="javascript:void(0)" (click)="forgotOpen.set(true)">Forgot password?</a>
+      </div>
+
+      <p-button
+        type="submit"
+        label="Sign in"
+        icon="pi pi-sign-in"
+        styleClass="w-full"
+        size="large"
+        [loading]="submitting()"
+      />
+
+      <p class="auth__alt">
+        Don&rsquo;t have an account? <a routerLink="/register">Create one</a>
+      </p>
+
+      <p class="auth__demo">
+        <i class="pi pi-info-circle"></i>
+        <strong>Demonstration build.</strong> There is no authentication server — any details are
+        accepted and take you straight into the portal with sample data.
+      </p>
+    </form>
+  </div>
+</div>
+
+<p-dialog
+  header="Reset your password"
+  [visible]="forgotOpen()"
+  (visibleChange)="forgotOpen.set($event)"
+  [modal]="true"
+  [style]="{ width: '26rem' }"
+  [draggable]="false"
+>
+  <form [formGroup]="forgotForm" (ngSubmit)="sendReset()" novalidate>
+    <p class="section-muted">
+      Enter the email address on your account and we will send a reset code to it.
+    </p>
+    <div class="field">
+      <label for="reset-email">Email address</label>
+      <input pInputText id="reset-email" type="email" formControlName="email" class="w-full" />
+      @if (forgotForm.controls.email.touched && forgotForm.controls.email.invalid) {
+        <small class="field-error">Enter a valid email address.</small>
+      }
+    </div>
+    <div class="flex justify-content-end gap-2 mt-3">
+      <p-button
+        label="Cancel"
+        severity="secondary"
+        [text]="true"
+        type="button"
+        (onClick)="forgotOpen.set(false)"
+      />
+      <p-button label="Send reset code" type="submit" />
+    </div>
+  </form>
+</p-dialog>

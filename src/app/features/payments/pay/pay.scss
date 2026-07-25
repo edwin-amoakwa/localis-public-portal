@@ -1,0 +1,391 @@
+.pay-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.pay-panel {
+  padding: 1.75rem;
+
+  h2 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+// --- Method chooser ----------------------------------------------------------
+.method-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin-bottom: 1.75rem;
+}
+
+.method-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border: 1.5px solid var(--asp-line);
+  border-radius: var(--asp-radius-sm);
+  background: var(--asp-card);
+  color: var(--asp-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+
+  > i:first-child {
+    font-size: 1.15rem;
+    color: var(--asp-blue-700);
+    flex: none;
+  }
+
+  strong {
+    display: block;
+    font-size: 0.92rem;
+  }
+
+  small {
+    color: var(--asp-ink-400);
+    font-size: 0.77rem;
+  }
+
+  &:hover {
+    border-color: var(--asp-blue-500);
+    background: var(--asp-blue-050);
+  }
+
+  &.is-selected {
+    border-color: var(--asp-blue-700);
+    background: var(--asp-blue-050);
+    box-shadow: 0 0 0 1px var(--asp-blue-700) inset;
+  }
+
+  &__check {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.6rem;
+    color: var(--asp-green-600);
+    font-size: 0.95rem;
+  }
+}
+
+// --- Form --------------------------------------------------------------------
+.pay-form .field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.1rem;
+
+  label {
+    font-size: 0.86rem;
+    font-weight: 650;
+    margin-bottom: 0.35rem;
+  }
+
+  input {
+    width: 100%;
+  }
+
+  .hint {
+    margin-top: 0.4rem;
+    font-size: 0.81rem;
+    color: var(--asp-ink-400);
+  }
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.req {
+  color: #c0342c;
+}
+
+.amount-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+
+  ::ng-deep .amount-input {
+    flex: 1;
+
+    input {
+      width: 100%;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+  }
+}
+
+.hint-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  padding: 0.8rem 1rem;
+  border-radius: var(--asp-radius-sm);
+  background: var(--asp-blue-050);
+  color: var(--asp-blue-800);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  margin: 0 0 1.1rem;
+}
+
+// --- Bank / QR ---------------------------------------------------------------
+.bank-details {
+  padding: 1.1rem 1.25rem;
+  border: 1px dashed var(--asp-line);
+  border-radius: var(--asp-radius-sm);
+  background: var(--asp-surface);
+  margin-bottom: 1.1rem;
+
+  h3 {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--asp-ink-400);
+    margin-bottom: 0.75rem;
+  }
+
+  dl > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px dashed var(--asp-line);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  dt {
+    font-size: 0.84rem;
+    color: var(--asp-ink-500);
+  }
+
+  dd {
+    margin: 0;
+    font-size: 0.88rem;
+    font-weight: 650;
+    text-align: right;
+  }
+}
+
+.qr-block {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.25rem;
+  border: 1px dashed var(--asp-line);
+  border-radius: var(--asp-radius-sm);
+  background: var(--asp-surface);
+  margin-bottom: 1.1rem;
+
+  h3 {
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  p {
+    font-size: 0.87rem;
+    margin-bottom: 0.4rem;
+  }
+}
+
+.qr-code {
+  width: 120px;
+  height: 120px;
+  flex: none;
+  border-radius: 10px;
+  border: 6px solid var(--asp-ink);
+  background:
+    conic-gradient(
+        from 0deg,
+        var(--asp-ink) 25%,
+        transparent 0 50%,
+        var(--asp-ink) 0 75%,
+        transparent 0
+      )
+      0 0 / 20px 20px;
+}
+
+.mono {
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+}
+
+// --- Actions -----------------------------------------------------------------
+.pay-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--asp-line);
+}
+
+.secure-note {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  justify-content: center;
+  margin: 1rem 0 0;
+  font-size: 0.8rem;
+  color: var(--asp-ink-400);
+
+  i {
+    color: var(--asp-green-600);
+  }
+}
+
+// --- Aside -------------------------------------------------------------------
+.pay-aside {
+  position: sticky;
+  top: calc(var(--asp-topbar-height) + 1rem);
+
+  h2 {
+    font-size: 1.05rem;
+    margin-bottom: 0.9rem;
+  }
+
+  h3 {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--asp-ink-400);
+    margin: 1.25rem 0 0.6rem;
+  }
+}
+
+.aside-facts > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px dashed var(--asp-line);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.aside-facts {
+  margin: 0;
+
+  dt {
+    font-size: 0.83rem;
+    color: var(--asp-ink-400);
+  }
+
+  dd {
+    margin: 0;
+    font-size: 0.86rem;
+    font-weight: 650;
+    text-align: right;
+  }
+}
+
+.charge-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.45rem 0;
+    font-size: 0.88rem;
+    border-bottom: 1px dashed var(--asp-line);
+  }
+}
+
+.charge-total {
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--asp-line);
+
+  > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.3rem 0;
+    font-size: 0.9rem;
+
+    strong.paid {
+      color: var(--asp-green-700);
+    }
+  }
+
+  &__balance {
+    margin-top: 0.4rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--asp-line);
+    font-size: 1.02rem !important;
+
+    strong {
+      color: #c0342c;
+      font-size: 1.2rem;
+    }
+  }
+}
+
+.empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+
+  i {
+    font-size: 2.2rem;
+    color: var(--asp-gold-600);
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+}
+
+// --- Responsive --------------------------------------------------------------
+@media (max-width: 1080px) {
+  .pay-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pay-aside {
+    position: static;
+    order: -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .pay-panel {
+    padding: 1.25rem;
+  }
+
+  .method-grid,
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .amount-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .qr-block {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .pay-actions {
+    flex-direction: column-reverse;
+
+    ::ng-deep .p-button {
+      width: 100%;
+    }
+  }
+}

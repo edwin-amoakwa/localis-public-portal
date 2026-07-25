@@ -1,0 +1,301 @@
+.messages {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 1rem;
+  align-items: stretch;
+  min-height: 560px;
+}
+
+// --- Thread list -------------------------------------------------------------
+.thread-list {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  > header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.25rem;
+    border-bottom: 1px solid var(--asp-line);
+
+    h2 {
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    span {
+      font-size: 0.8rem;
+      color: var(--asp-ink-400);
+    }
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  li + li button {
+    border-top: 1px solid var(--asp-line);
+  }
+
+  button {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.95rem 1.25rem;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    font: inherit;
+    color: var(--asp-ink);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--asp-surface);
+    }
+
+    &.is-active {
+      background: var(--asp-blue-050);
+      box-shadow: inset 3px 0 0 var(--asp-blue-700);
+    }
+  }
+
+  ::ng-deep .thread-avatar {
+    flex: none;
+    width: 38px;
+    height: 38px;
+    background: var(--asp-blue-100);
+    color: var(--asp-blue-700);
+    font-weight: 700;
+    font-size: 0.8rem;
+  }
+
+  &__body {
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+
+    strong {
+      font-size: 0.9rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  small {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--asp-ink-400);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  time {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.74rem;
+    color: var(--asp-ink-400);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .is-unread strong {
+    color: var(--asp-blue-700);
+    font-weight: 800;
+  }
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #c0342c;
+  flex: none;
+}
+
+// --- Conversation ------------------------------------------------------------
+.conversation {
+  display: flex;
+  flex-direction: column;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.1rem 1.4rem;
+    border-bottom: 1px solid var(--asp-line);
+
+    h2 {
+      font-size: 1.05rem;
+      margin: 0;
+    }
+
+    small {
+      color: var(--asp-ink-400);
+      font-size: 0.82rem;
+    }
+  }
+
+  &__body {
+    flex: 1;
+    padding: 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: auto;
+    background: var(--asp-surface);
+  }
+
+  &__reply {
+    padding: 1.1rem 1.4rem;
+    border-top: 1px solid var(--asp-line);
+
+    textarea {
+      width: 100%;
+      resize: vertical;
+    }
+  }
+
+  &__reply-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.7rem;
+
+    small {
+      font-size: 0.8rem;
+      max-width: 46ch;
+    }
+  }
+}
+
+.back-btn {
+  display: none;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border: 1px solid var(--asp-line);
+  border-radius: 10px;
+  background: var(--asp-card);
+  color: var(--asp-ink-600);
+  cursor: pointer;
+  place-items: center;
+}
+
+.bubble {
+  max-width: 76%;
+  padding: 0.9rem 1.1rem;
+  border-radius: 14px 14px 14px 4px;
+  background: var(--asp-card);
+  border: 1px solid var(--asp-line);
+  align-self: flex-start;
+
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.35rem;
+
+    strong {
+      font-size: 0.85rem;
+      color: var(--asp-blue-700);
+    }
+
+    time {
+      font-size: 0.73rem;
+      color: var(--asp-ink-400);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.91rem;
+    line-height: 1.55;
+  }
+
+  &--mine {
+    align-self: flex-end;
+    border-radius: 14px 14px 4px 14px;
+    background: var(--asp-blue-700);
+    border-color: var(--asp-blue-700);
+    color: #fff;
+
+    header strong {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    header time {
+      color: rgba(255, 255, 255, 0.65);
+    }
+  }
+}
+
+.empty {
+  flex: 1;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  padding: 3rem 1.5rem;
+
+  i {
+    font-size: 2.2rem;
+    color: var(--asp-ink-400);
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+}
+
+// --- Responsive --------------------------------------------------------------
+@media (max-width: 980px) {
+  .messages {
+    grid-template-columns: 1fr;
+    min-height: 0;
+
+    .conversation {
+      display: none;
+    }
+
+    &.show-conversation {
+      .thread-list {
+        display: none;
+      }
+
+      .conversation {
+        display: flex;
+        min-height: 70vh;
+      }
+    }
+  }
+
+  .back-btn {
+    display: grid;
+  }
+
+  .conversation__reply-actions {
+    flex-direction: column;
+    align-items: stretch;
+
+    ::ng-deep .p-button {
+      width: 100%;
+    }
+  }
+
+  .bubble {
+    max-width: 92%;
+  }
+}

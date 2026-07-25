@@ -1,0 +1,219 @@
+@if (invoice(); as inv) {
+  <p-breadcrumb [model]="crumbs()" [home]="home" styleClass="mb-3" />
+
+  <div class="page-header">
+    <div>
+      <h1>Make a payment</h1>
+      <p>{{ inv.description }}</p>
+    </div>
+  </div>
+
+  <div class="pay-grid">
+    <!-- Payment form ------------------------------------------------------- -->
+    <div class="asp-card pay-panel">
+      <h2>Choose how to pay</h2>
+
+      <div class="method-grid" role="radiogroup" aria-label="Payment method">
+        @for (option of methods; track option.value) {
+          <button
+            type="button"
+            class="method-card"
+            role="radio"
+            [attr.aria-checked]="method() === option.value"
+            [class.is-selected]="method() === option.value"
+            (click)="chooseMethod(option.value)"
+          >
+            <i [class]="option.icon" aria-hidden="true"></i>
+            <span>
+              <strong>{{ option.label }}</strong>
+              <small>{{ option.hint }}</small>
+            </span>
+            @if (method() === option.value) {
+              <i class="pi pi-check-circle method-card__check"></i>
+            }
+          </button>
+        }
+      </div>
+
+      <form [formGroup]="form" class="pay-form">
+        <!-- Amount ---------------------------------------------------------- -->
+        <div class="field">
+          <label for="amount">Amount to pay <span class="req">*</span></label>
+          <div class="amount-row">
+            <p-inputnumber
+              inputId="amount"
+              formControlName="amount"
+              mode="currency"
+              currency="GHS"
+              locale="en-GH"
+              [min]="0"
+              [max]="balance()"
+              styleClass="amount-input"
+            />
+            <p-button
+              label="Pay full balance"
+              severity="secondary"
+              [outlined]="true"
+              type="button"
+              (onClick)="payFull()"
+            />
+          </div>
+          <small class="hint">
+            Outstanding balance: {{ balance() | currency: 'GHS ' : 'symbol' : '1.2-2' }}.
+            Part payments are accepted where the Assembly allows them.
+          </small>
+        </div>
+
+        <!-- Method-specific fields ------------------------------------------ -->
+        @if (method() === 'MOBILE_MONEY') {
+          <div class="field-row">
+            <div class="field">
+              <label for="momoNetwork">Network</label>
+              <input pInputText id="momoNetwork" formControlName="momoNetwork" />
+            </div>
+            <div class="field">
+              <label for="momoNumber">Mobile money number</label>
+              <input pInputText id="momoNumber" formControlName="momoNumber" />
+            </div>
+          </div>
+          <p class="hint-box">
+            <i class="pi pi-mobile"></i>
+            You will receive a prompt on this number. Approve it with your PIN to complete the
+            payment.
+          </p>
+        }
+
+        @if (method() === 'DEBIT_CARD' || method() === 'CREDIT_CARD') {
+          <div class="field">
+            <label for="cardName">Name on card</label>
+            <input pInputText id="cardName" formControlName="cardName" placeholder="AKOSUA MENSAH" />
+          </div>
+          <div class="field">
+            <label for="cardNumber">Card number</label>
+            <input
+              pInputText
+              id="cardNumber"
+              formControlName="cardNumber"
+              placeholder="0000 0000 0000 0000"
+              inputmode="numeric"
+            />
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="cardExpiry">Expiry</label>
+              <input pInputText id="cardExpiry" formControlName="cardExpiry" placeholder="MM/YY" />
+            </div>
+            <div class="field">
+              <label for="cardCvv">CVV</label>
+              <input pInputText id="cardCvv" formControlName="cardCvv" placeholder="123" />
+            </div>
+          </div>
+          <p class="hint-box">
+            <i class="pi pi-lock"></i>
+            Card details are never stored by the portal. This is a demonstration screen — do not
+            enter real card details.
+          </p>
+        }
+
+        @if (method() === 'BANK_TRANSFER') {
+          <div class="bank-details">
+            <h3>Transfer to</h3>
+            <dl>
+              <div><dt>Account name</dt><dd>{{ inv.assembly }}</dd></div>
+              <div><dt>Bank</dt><dd>Ghana Commercial Bank, Abokobi</dd></div>
+              <div><dt>Account number</dt><dd class="mono">1041 0023 4455 1</dd></div>
+              <div><dt>Reference</dt><dd class="mono">{{ inv.invoiceNumber }}</dd></div>
+            </dl>
+            <p class="section-muted text-tiny mb-0">
+              Quote the invoice number as the transfer reference so the payment reaches the right
+              account.
+            </p>
+          </div>
+        }
+
+        @if (method() === 'QR_CODE') {
+          <div class="qr-block">
+            <div class="qr-code" aria-hidden="true"></div>
+            <div>
+              <h3>Scan to pay</h3>
+              <p class="section-muted">
+                Open your bank or mobile money app, scan this code, and confirm the amount shown.
+              </p>
+              <p class="mono">{{ inv.invoiceNumber }}</p>
+            </div>
+          </div>
+        }
+
+        <footer class="pay-actions">
+          <p-button
+            label="Cancel"
+            severity="secondary"
+            [outlined]="true"
+            type="button"
+            routerLink="/app/payments"
+          />
+          <p-button
+            [label]="'Pay ' + (form.controls.amount.value | currency: 'GHS ' : 'symbol' : '1.2-2')"
+            icon="pi pi-lock"
+            type="button"
+            size="large"
+            [loading]="processing()"
+            (onClick)="pay()"
+          />
+        </footer>
+
+        <p class="secure-note">
+          <i class="pi pi-shield"></i>
+          Demonstration build — no money moves and no card or PIN details are transmitted.
+        </p>
+      </form>
+    </div>
+
+    <!-- Invoice summary ---------------------------------------------------- -->
+    <aside class="asp-card pay-aside">
+      <h2>Invoice summary</h2>
+
+      <dl class="aside-facts">
+        <div><dt>Invoice</dt><dd class="mono">{{ inv.invoiceNumber }}</dd></div>
+        @if (inv.applicationNumber) {
+          <div><dt>Application</dt><dd class="mono">{{ inv.applicationNumber }}</dd></div>
+        }
+        <div><dt>Service</dt><dd>{{ inv.serviceName }}</dd></div>
+        <div><dt>Issued</dt><dd>{{ inv.issuedDate | date: 'd MMM y' }}</dd></div>
+        <div><dt>Due</dt><dd>{{ inv.dueDate | date: 'd MMM y' }}</dd></div>
+      </dl>
+
+      <h3>Charges</h3>
+      <ul class="charge-list">
+        @for (item of inv.items; track item.name) {
+          <li>
+            <span>{{ item.name }}</span>
+            <strong>{{ item.amount | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
+          </li>
+        }
+      </ul>
+
+      <div class="charge-total">
+        <div>
+          <span>Invoice total</span>
+          <strong>{{ inv.total | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
+        </div>
+        <div>
+          <span>Already paid</span>
+          <strong class="paid">{{ inv.paid | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
+        </div>
+        <div class="charge-total__balance">
+          <span>Balance</span>
+          <strong>{{ balance() | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
+        </div>
+      </div>
+    </aside>
+  </div>
+} @else {
+  <div class="asp-card empty">
+    <i class="pi pi-exclamation-triangle"></i>
+    <h2>Invoice not found</h2>
+    <p class="section-muted">That invoice is not on your account.</p>
+    <p-button label="Back to payments" routerLink="/app/payments" />
+  </div>
+}

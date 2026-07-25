@@ -1,0 +1,220 @@
+@if (application(); as app) {
+  <p-breadcrumb [model]="crumbs()" [home]="home" styleClass="mb-3" />
+
+  <!-- Header --------------------------------------------------------------- -->
+  <section class="asp-card detail-head">
+    <div class="detail-head__main">
+      <div class="detail-head__title">
+        <h1>{{ app.applicationNumber }}</h1>
+        <p-tag [value]="statusLabel(app.status)" [severity]="statusSeverity(app.status)" />
+      </div>
+      <p class="detail-head__subject">{{ app.subject }}</p>
+
+      <dl class="detail-head__facts">
+        <div><dt>Service</dt><dd>{{ app.serviceName }}</dd></div>
+        <div><dt>Submitted</dt><dd>{{ app.submittedDate | date: 'd MMMM y' }}</dd></div>
+        <div><dt>Officer</dt><dd>{{ app.officer }}</dd></div>
+        <div><dt>Assembly</dt><dd>{{ app.assembly }}</dd></div>
+      </dl>
+    </div>
+
+    @if (outstanding() > 0) {
+      <div class="detail-head__cta">
+        <span class="detail-head__due">
+          {{ outstanding() | currency: 'GHS ' : 'symbol' : '1.2-2' }}
+          <small>outstanding</small>
+        </span>
+        @if (invoice(); as inv) {
+          <p-button
+            label="Pay now"
+            icon="pi pi-credit-card"
+            [routerLink]="['/app/payments/pay', inv.id]"
+          />
+        }
+      </div>
+    }
+  </section>
+
+  <div class="detail-grid">
+    <div class="detail-main">
+      <!-- Timeline --------------------------------------------------------- -->
+      <section class="asp-card">
+        <h2>Application history</h2>
+        <p-timeline [value]="app.timeline" align="left" styleClass="app-timeline">
+          <ng-template pTemplate="marker" let-event>
+            <span class="timeline-marker" [class]="markerClass(event.status)">
+              <i [class]="markerIcon(event.status)"></i>
+            </span>
+          </ng-template>
+          <ng-template pTemplate="content" let-event>
+            <div class="timeline-item">
+              <div class="timeline-item__head">
+                <strong>{{ event.title }}</strong>
+                <time>{{ event.date }}</time>
+              </div>
+              @if (event.detail) {
+                <p>{{ event.detail }}</p>
+              }
+              <small>by {{ event.actor }}</small>
+            </div>
+          </ng-template>
+        </p-timeline>
+      </section>
+
+      <!-- Officer comments -------------------------------------------------- -->
+      @if (app.officerComments) {
+        <section class="asp-card comment-card">
+          <h2>Officer comments</h2>
+          <blockquote>
+            <p>{{ app.officerComments }}</p>
+            <cite>{{ app.officer }} &middot; {{ app.assembly }}</cite>
+          </blockquote>
+        </section>
+      }
+
+      <!-- Documents --------------------------------------------------------- -->
+      <section class="asp-card">
+        <h2>Documents</h2>
+        @if (app.documents.length === 0) {
+          <p class="section-muted mb-0">No documents were attached to this application.</p>
+        } @else {
+          <ul class="doc-list">
+            @for (doc of app.documents; track doc.name) {
+              <li>
+                <span class="doc-list__icon"><i class="pi pi-file"></i></span>
+                <span class="doc-list__body">
+                  <strong>{{ doc.name }}</strong>
+                  <small>{{ doc.type }} · {{ doc.size }} · uploaded {{ doc.uploadedOn | date: 'd MMM y' }}</small>
+                </span>
+                @if (doc.verified) {
+                  <p-tag value="Verified" severity="success" styleClass="text-tiny" />
+                } @else {
+                  <p-tag value="Pending check" severity="warn" styleClass="text-tiny" />
+                }
+                <p-button
+                  icon="pi pi-download"
+                  severity="secondary"
+                  [text]="true"
+                  [rounded]="true"
+                  ariaLabel="Download document"
+                  (onClick)="download(doc.name)"
+                />
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
+
+    <aside class="detail-aside">
+      <!-- Payment ----------------------------------------------------------- -->
+      <section class="asp-card">
+        <h2>Payment</h2>
+        @if (app.amountDue === 0) {
+          <p class="section-muted mb-0">No fee is payable on this application.</p>
+        } @else {
+          <div class="pay-figures">
+            <div>
+              <span>Assessed</span>
+              <strong>{{ app.amountDue | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
+            </div>
+            <div>
+              <span>Paid</span>
+              <strong class="paid">{{ app.amountPaid | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
+            </div>
+            <div>
+              <span>Outstanding</span>
+              <strong [class.due]="outstanding() > 0">
+                {{ outstanding() | currency: 'GHS ' : 'symbol' : '1.2-2' }}
+              </strong>
+            </div>
+          </div>
+
+          <p-progressbar [value]="paidPercent()" [showValue]="false" styleClass="pay-bar" />
+          <p class="text-tiny section-muted">{{ paidPercent() }}% settled</p>
+
+          @if (invoice(); as inv) {
+            <dl class="aside-facts">
+              <div><dt>Invoice</dt><dd class="mono">{{ inv.invoiceNumber }}</dd></div>
+              <div><dt>Issued</dt><dd>{{ inv.issuedDate | date: 'd MMM y' }}</dd></div>
+              <div><dt>Due</dt><dd>{{ inv.dueDate | date: 'd MMM y' }}</dd></div>
+            </dl>
+
+            @if (outstanding() > 0) {
+              <p-button
+                label="Settle invoice"
+                icon="pi pi-credit-card"
+                styleClass="w-full"
+                [routerLink]="['/app/payments/pay', inv.id]"
+              />
+            } @else {
+              <p-button
+                label="View payments"
+                severity="secondary"
+                [outlined]="true"
+                styleClass="w-full"
+                routerLink="/app/payments"
+              />
+            }
+          }
+        }
+      </section>
+
+      <!-- Inspection -------------------------------------------------------- -->
+      @if (app.inspection; as inspection) {
+        <section class="asp-card">
+          <h2>Inspection</h2>
+          <dl class="aside-facts">
+            <div><dt>Scheduled</dt><dd>{{ inspection.scheduledDate | date: 'd MMM y' }}</dd></div>
+            <div><dt>Inspector</dt><dd>{{ inspection.inspector }}</dd></div>
+            <div>
+              <dt>Outcome</dt>
+              <dd>
+                <p-tag
+                  [value]="inspection.outcome === 'PENDING' ? 'Pending' : inspection.outcome"
+                  [severity]="inspection.outcome === 'PENDING' ? 'warn' : 'success'"
+                  styleClass="text-tiny"
+                />
+              </dd>
+            </div>
+          </dl>
+          @if (inspection.notes) {
+            <p class="hint-box">
+              <i class="pi pi-info-circle"></i>
+              {{ inspection.notes }}
+            </p>
+          }
+          <p-button
+            label="View appointments"
+            severity="secondary"
+            [outlined]="true"
+            styleClass="w-full"
+            routerLink="/app/appointments"
+          />
+        </section>
+      }
+
+      <section class="asp-card">
+        <h2>Need help?</h2>
+        <p class="section-muted text-tiny">
+          Questions about this application should go to the Assembly handling it.
+        </p>
+        <p-button
+          label="Message the Assembly"
+          icon="pi pi-comments"
+          severity="secondary"
+          [outlined]="true"
+          styleClass="w-full"
+          routerLink="/app/messages"
+        />
+      </section>
+    </aside>
+  </div>
+} @else {
+  <div class="asp-card empty">
+    <i class="pi pi-exclamation-triangle"></i>
+    <h2>Application not found</h2>
+    <p class="section-muted">That application is not on your account.</p>
+    <p-button label="Back to applications" routerLink="/app/applications" />
+  </div>
+}

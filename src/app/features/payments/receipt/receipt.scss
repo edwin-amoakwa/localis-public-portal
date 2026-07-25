@@ -1,0 +1,236 @@
+.receipt {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2.5rem;
+  background: var(--asp-card);
+  border: 1px solid var(--asp-line);
+  border-radius: var(--asp-radius);
+  box-shadow: var(--asp-shadow-xs);
+  border-top: 5px solid var(--asp-blue-700);
+
+  &__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--asp-line);
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+
+    strong {
+      display: block;
+      font-size: 1.02rem;
+      color: var(--asp-ink);
+    }
+
+    small {
+      color: var(--asp-ink-400);
+      font-size: 0.79rem;
+    }
+  }
+
+  &__stamp {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    background: var(--asp-green-100);
+    color: var(--asp-green-700);
+    font-weight: 800;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border: 2px solid var(--asp-green-600);
+  }
+
+  &__title {
+    text-align: center;
+    padding: 1.75rem 0 1.25rem;
+
+    h2 {
+      font-size: 1.25rem;
+      margin-bottom: 0.35rem;
+    }
+  }
+
+  &__number {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--asp-blue-700);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem 2rem;
+    margin: 0 0 1.5rem;
+    padding: 1.25rem 0;
+    border-top: 1px dashed var(--asp-line);
+    border-bottom: 1px dashed var(--asp-line);
+
+    dt {
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--asp-ink-400);
+      margin-bottom: 0.2rem;
+    }
+
+    dd {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 650;
+    }
+  }
+
+  &__what {
+    margin-bottom: 1.25rem;
+
+    span {
+      display: block;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--asp-ink-400);
+      margin-bottom: 0.2rem;
+    }
+
+    strong {
+      font-size: 1.05rem;
+    }
+  }
+
+  &__amount {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--asp-radius-sm);
+    background: var(--asp-blue-050);
+    border: 1px solid var(--asp-blue-100);
+
+    span {
+      font-size: 0.88rem;
+      font-weight: 650;
+      color: var(--asp-ink-500);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    strong {
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: var(--asp-blue-700);
+      letter-spacing: -0.03em;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  &__foot {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-top: 1.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--asp-line);
+  }
+
+  &__qr {
+    width: 92px;
+    height: 92px;
+    flex: none;
+    border-radius: 8px;
+    border: 5px solid var(--asp-ink);
+    background:
+      conic-gradient(
+          from 0deg,
+          var(--asp-ink) 25%,
+          transparent 0 50%,
+          var(--asp-ink) 0 75%,
+          transparent 0
+        )
+        0 0 / 16px 16px;
+  }
+
+  &__note p {
+    font-size: 0.83rem;
+    color: var(--asp-ink-500);
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__demo {
+    color: var(--asp-gold-700) !important;
+  }
+}
+
+.mono {
+  font-variant-numeric: tabular-nums;
+}
+
+.empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+
+  i {
+    font-size: 2.2rem;
+    color: var(--asp-gold-600);
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .receipt {
+    padding: 1.5rem;
+
+    &__head,
+    &__foot {
+      flex-direction: column;
+    }
+
+    &__grid {
+      grid-template-columns: 1fr;
+    }
+
+    &__amount {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.4rem;
+    }
+  }
+}
+
+// --- Print -------------------------------------------------------------------
+@media print {
+  :host {
+    display: block;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .receipt {
+    max-width: none;
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+    border-top: 4px solid #0f4c81;
+    padding-top: 1.5rem;
+  }
+}

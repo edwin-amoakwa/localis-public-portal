@@ -1,0 +1,170 @@
+.filter-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--asp-line);
+  background: var(--asp-card);
+  color: var(--asp-ink-600);
+  font: inherit;
+  font-size: 0.87rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--asp-blue-500);
+    color: var(--asp-blue-700);
+  }
+
+  &.is-active {
+    background: var(--asp-blue-700);
+    border-color: var(--asp-blue-700);
+    color: #fff;
+  }
+
+  &__count {
+    display: inline-grid;
+    place-items: center;
+    min-width: 19px;
+    height: 19px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: #c0342c;
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+  }
+}
+
+.notif-panel {
+  padding: 1.5rem;
+}
+
+::ng-deep .notif-timeline {
+  .p-timeline-event-opposite {
+    display: none;
+  }
+
+  .p-timeline-event-content {
+    padding-bottom: 1.5rem;
+  }
+}
+
+.notif-marker {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 0.9rem;
+  border: 3px solid var(--asp-card);
+  box-shadow: 0 0 0 1px var(--asp-line);
+}
+
+.notif {
+  padding-left: 0.25rem;
+
+  header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    strong {
+      font-size: 0.97rem;
+    }
+  }
+
+  &.is-unread &__title strong {
+    color: var(--asp-blue-700);
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #c0342c;
+    flex: none;
+  }
+
+  p {
+    margin: 0 0 0.5rem;
+    font-size: 0.89rem;
+    color: var(--asp-ink-500);
+    max-width: 80ch;
+  }
+
+  footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    time {
+      font-size: 0.79rem;
+      color: var(--asp-ink-400);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    a {
+      font-size: 0.85rem;
+      font-weight: 650;
+    }
+  }
+}
+
+.link-btn {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--asp-ink-400);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--asp-blue-700);
+    text-decoration: underline;
+  }
+}
+
+.empty {
+  text-align: center;
+  padding: 2.5rem 1rem;
+
+  i {
+    font-size: 2.2rem;
+    color: var(--asp-ink-400);
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .notif header {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+}

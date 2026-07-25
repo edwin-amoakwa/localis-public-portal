@@ -1,0 +1,249 @@
+<div class="page-header">
+  <div>
+    <h1>{{ greeting() }}, {{ user()?.firstName }}</h1>
+    <p>{{ user()?.assembly }} &middot; {{ user()?.region }}</p>
+  </div>
+  <div class="flex gap-2">
+    <p-button
+      label="Apply for a service"
+      icon="pi pi-plus"
+      routerLink="/app/services"
+    />
+    <p-button
+      label="Make a payment"
+      icon="pi pi-credit-card"
+      severity="secondary"
+      [outlined]="true"
+      routerLink="/app/payments"
+    />
+  </div>
+</div>
+
+<!-- Summary tiles ---------------------------------------------------------- -->
+<section class="tiles" aria-label="Summary">
+  <div class="asp-card stat-tile">
+    <span class="stat-tile__icon tint-blue"><i class="pi pi-file-edit"></i></span>
+    <span>
+      <span class="stat-tile__value">{{ portal.submittedCount() }}</span>
+      <span class="stat-tile__label">Applications submitted</span>
+    </span>
+  </div>
+
+  <div class="asp-card stat-tile">
+    <span class="stat-tile__icon tint-gold"><i class="pi pi-hourglass"></i></span>
+    <span>
+      <span class="stat-tile__value">{{ portal.pendingCount() }}</span>
+      <span class="stat-tile__label">Pending applications</span>
+    </span>
+  </div>
+
+  <div class="asp-card stat-tile">
+    <span class="stat-tile__icon tint-green"><i class="pi pi-check-circle"></i></span>
+    <span>
+      <span class="stat-tile__value">{{ portal.approvedCount() }}</span>
+      <span class="stat-tile__label">Approved applications</span>
+    </span>
+  </div>
+
+  <div class="asp-card stat-tile">
+    <span class="stat-tile__icon tint-blue"><i class="pi pi-credit-card"></i></span>
+    <span>
+      <span class="stat-tile__value">{{
+        portal.outstandingTotal() | currency: 'GHS ' : 'symbol' : '1.0-0'
+      }}</span>
+      <span class="stat-tile__label">Outstanding payments</span>
+    </span>
+  </div>
+
+  <div class="asp-card stat-tile">
+    <span class="stat-tile__icon tint-green"><i class="pi pi-wallet"></i></span>
+    <span>
+      <span class="stat-tile__value">{{
+        portal.completedPaymentsTotal() | currency: 'GHS ' : 'symbol' : '1.0-0'
+      }}</span>
+      <span class="stat-tile__label">Completed payments</span>
+    </span>
+  </div>
+
+  <div class="asp-card stat-tile">
+    <span class="stat-tile__icon tint-gold"><i class="pi pi-calendar"></i></span>
+    <span>
+      <span class="stat-tile__value">{{ appointments().length }}</span>
+      <span class="stat-tile__label">Upcoming appointments</span>
+    </span>
+  </div>
+
+  <div class="asp-card stat-tile">
+    <span class="stat-tile__icon tint-grey"><i class="pi pi-bell"></i></span>
+    <span>
+      <span class="stat-tile__value">{{ portal.unreadNotifications().length }}</span>
+      <span class="stat-tile__label">Unread notifications</span>
+    </span>
+  </div>
+
+  <div class="asp-card stat-tile">
+    <span class="stat-tile__icon tint-grey"><i class="pi pi-comments"></i></span>
+    <span>
+      <span class="stat-tile__value">{{ portal.unreadMessageCount() }}</span>
+      <span class="stat-tile__label">Unread messages</span>
+    </span>
+  </div>
+</section>
+
+<!-- Action required -------------------------------------------------------- -->
+@if (portal.outstandingTotal() > 0) {
+  <section class="asp-card action-banner">
+    <span class="action-banner__icon"><i class="pi pi-exclamation-circle"></i></span>
+    <div class="action-banner__body">
+      <strong>You have {{ portal.outstandingInvoices().length }} unsettled invoice(s)</strong>
+      <p>
+        {{ portal.outstandingTotal() | currency: 'GHS ' : 'symbol' : '1.2-2' }} is outstanding.
+        Applications awaiting payment do not move on until the invoice is settled.
+      </p>
+    </div>
+    <p-button label="Settle now" icon="pi pi-arrow-right" iconPos="right" routerLink="/app/payments" />
+  </section>
+}
+
+<!-- Quick actions ---------------------------------------------------------- -->
+<h2 class="section-title">Quick actions</h2>
+<section class="quick-grid" aria-label="Quick actions">
+  @for (action of quickActions; track action.link) {
+    <a class="asp-card quick-card" [routerLink]="action.link">
+      <span class="quick-card__icon" [class]="action.tint"><i [class]="action.icon"></i></span>
+      <span>
+        <strong>{{ action.label }}</strong>
+        <small>{{ action.detail }}</small>
+      </span>
+      <i class="pi pi-angle-right quick-card__chevron"></i>
+    </a>
+  }
+</section>
+
+<div class="split-grid">
+  <!-- Recent applications -------------------------------------------------- -->
+  <section class="asp-card asp-card--flush">
+    <header class="card-head">
+      <h2>Recent applications</h2>
+      <a routerLink="/app/applications">View all</a>
+    </header>
+
+    <p-table [value]="recent()" styleClass="p-datatable-sm" responsiveLayout="scroll">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Application</th>
+          <th>Service</th>
+          <th>Submitted</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-app>
+        <tr>
+          <td>
+            <a [routerLink]="['/app/applications', app.id]" class="mono">{{
+              app.applicationNumber
+            }}</a>
+            <small class="cell-sub">{{ app.subject }}</small>
+          </td>
+          <td>{{ app.serviceName }}</td>
+          <td>{{ app.submittedDate | date: 'd MMM y' }}</td>
+          <td>
+            <p-tag
+              [value]="statusLabel(app.status)"
+              [severity]="statusSeverity(app.status)"
+              styleClass="text-tiny"
+            />
+          </td>
+          <td class="text-right">
+            <a [routerLink]="['/app/applications', app.id]" aria-label="Open application">
+              <i class="pi pi-angle-right"></i>
+            </a>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="text-center section-muted">You have no applications yet.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </section>
+
+  <!-- Recent activity ------------------------------------------------------ -->
+  <section class="asp-card">
+    <header class="card-head card-head--plain">
+      <h2>Recent activity</h2>
+    </header>
+
+    <ul class="activity-list">
+      @for (activity of activities(); track activity.id) {
+        <li>
+          <span class="activity-list__icon" [class]="'tint-' + activity.tint">
+            <i [class]="activity.icon"></i>
+          </span>
+          <span class="activity-list__body">
+            <strong>{{ activity.title }}</strong>
+            <small>{{ activity.detail }}</small>
+          </span>
+          <time>{{ activity.date | date: 'd MMM' }}</time>
+        </li>
+      }
+    </ul>
+  </section>
+</div>
+
+<div class="split-grid">
+  <!-- Notifications -------------------------------------------------------- -->
+  <section class="asp-card">
+    <header class="card-head card-head--plain">
+      <h2>Latest notifications</h2>
+      <a routerLink="/app/notifications">View all</a>
+    </header>
+
+    <ul class="notice-list">
+      @for (notice of notifications().slice(0, 4); track notice.id) {
+        <li [class.is-unread]="!notice.read">
+          <div class="notice-list__head">
+            <strong>{{ notice.title }}</strong>
+            @if (!notice.read) {
+              <span class="dot" aria-label="Unread"></span>
+            }
+          </div>
+          <p>{{ notice.body }}</p>
+          <time>{{ notice.date }}</time>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <!-- Appointments --------------------------------------------------------- -->
+  <section class="asp-card">
+    <header class="card-head card-head--plain">
+      <h2>Upcoming appointments</h2>
+      <a routerLink="/app/appointments">View all</a>
+    </header>
+
+    @if (appointments().length === 0) {
+      <p class="section-muted">Nothing scheduled at the moment.</p>
+    } @else {
+      <ul class="appointment-list">
+        @for (appointment of appointments(); track appointment.id) {
+          <li>
+            <span class="appointment-list__date">
+              <strong>{{ appointment.date | date: 'd' }}</strong>
+              <small>{{ appointment.date | date: 'MMM' }}</small>
+            </span>
+            <span class="appointment-list__body">
+              <strong>{{ appointment.title }}</strong>
+              <small>
+                {{ appointment.time }} &middot; {{ appointment.location }}<br />
+                Officer: {{ appointment.officer }}
+              </small>
+            </span>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+</div>

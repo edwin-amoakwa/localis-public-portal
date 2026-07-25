@@ -1,0 +1,497 @@
+::ng-deep .apply-steps {
+  margin-bottom: 1.25rem;
+
+  .p-steps-item .p-menuitem-link {
+    background: transparent;
+  }
+}
+
+.apply-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 1rem;
+  align-items: start;
+}
+
+.apply-panel {
+  padding: 1.75rem;
+
+  > h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.35rem;
+  }
+
+  > p.section-muted {
+    margin-bottom: 1.5rem;
+  }
+}
+
+// --- Forms -------------------------------------------------------------------
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+
+  &--full {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    font-size: 0.86rem;
+    font-weight: 650;
+    margin-bottom: 0.35rem;
+  }
+
+  input,
+  textarea,
+  ::ng-deep .p-select,
+  ::ng-deep .p-datepicker {
+    width: 100%;
+  }
+}
+
+.req {
+  color: #c0342c;
+}
+
+.field-error {
+  margin-top: 0.3rem;
+  font-size: 0.8rem;
+  color: #c0342c;
+}
+
+// --- Prefill chips -----------------------------------------------------------
+.prefill {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+
+  &__chip {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--asp-line);
+    border-radius: var(--asp-radius-sm);
+    background: var(--asp-card);
+    color: var(--asp-ink);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    i {
+      color: var(--asp-blue-700);
+    }
+
+    strong {
+      display: block;
+      font-size: 0.88rem;
+    }
+
+    small {
+      color: var(--asp-ink-400);
+      font-size: 0.76rem;
+    }
+
+    &:hover {
+      border-color: var(--asp-blue-500);
+      background: var(--asp-blue-050);
+    }
+  }
+}
+
+// --- Uploads -----------------------------------------------------------------
+.upload-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.25rem;
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--asp-line);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  &__info {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    min-width: 0;
+
+    > i {
+      color: var(--asp-blue-700);
+      margin-top: 3px;
+    }
+
+    strong {
+      display: block;
+      font-size: 0.92rem;
+    }
+
+    small {
+      font-size: 0.79rem;
+      color: var(--asp-ink-400);
+
+      &.attached {
+        color: var(--asp-green-700);
+      }
+    }
+  }
+}
+
+.upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--asp-line);
+  border-radius: var(--asp-radius-sm);
+  background: var(--asp-card);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: var(--asp-blue-500);
+    color: var(--asp-blue-700);
+    background: var(--asp-blue-050);
+  }
+}
+
+.hint-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  padding: 0.8rem 1rem;
+  border-radius: var(--asp-radius-sm);
+  background: var(--asp-gold-100);
+  color: var(--asp-gold-700);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  margin: 0 0 1rem;
+}
+
+// --- Review ------------------------------------------------------------------
+.review-block {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--asp-line);
+
+  h3 {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--asp-ink-400);
+    margin-bottom: 0.7rem;
+  }
+
+  dl {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem 1.5rem;
+    margin: 0;
+
+    > div {
+      min-width: 0;
+    }
+
+    dt {
+      font-size: 0.78rem;
+      color: var(--asp-ink-400);
+    }
+
+    dd {
+      margin: 0;
+      font-size: 0.92rem;
+      font-weight: 600;
+      word-break: break-word;
+    }
+  }
+
+  &--fees ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.45rem 0;
+      font-size: 0.92rem;
+      border-bottom: 1px dashed var(--asp-line);
+    }
+  }
+}
+
+.review-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.85rem;
+  font-size: 1.02rem;
+
+  strong {
+    color: var(--asp-blue-700);
+    font-size: 1.2rem;
+  }
+}
+
+.review-docs {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.9rem;
+
+  li {
+    padding: 0.3rem 0;
+
+    i {
+      color: var(--asp-blue-700);
+      margin-right: 0.4rem;
+    }
+
+    small {
+      color: var(--asp-ink-400);
+    }
+  }
+}
+
+.declaration {
+  padding: 1.1rem 0 0;
+
+  label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    cursor: pointer;
+  }
+}
+
+// --- Confirmation ------------------------------------------------------------
+.confirmation {
+  text-align: center;
+  padding: 1rem 0 0.5rem;
+
+  &__icon {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 1.1rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--asp-green-100);
+    color: var(--asp-green-700);
+    font-size: 1.9rem;
+  }
+
+  &__ref {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 1rem 2rem;
+    margin: 1.25rem 0;
+    border-radius: var(--asp-radius);
+    background: var(--asp-blue-050);
+    border: 1px dashed var(--asp-blue-500);
+
+    span {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--asp-ink-500);
+    }
+
+    strong {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--asp-blue-700);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  &__facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem 1.5rem;
+    text-align: left;
+    max-width: 520px;
+    margin: 0 auto 1.25rem;
+
+    dt {
+      font-size: 0.78rem;
+      color: var(--asp-ink-400);
+    }
+
+    dd {
+      margin: 0;
+      font-weight: 600;
+      font-size: 0.93rem;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+  }
+}
+
+// --- Footer ------------------------------------------------------------------
+.apply-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--asp-line);
+}
+
+// --- Aside -------------------------------------------------------------------
+.apply-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: sticky;
+  top: calc(var(--asp-topbar-height) + 1rem);
+
+  h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.aside-facts {
+  margin: 0.9rem 0 0;
+
+  > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.45rem 0;
+    border-bottom: 1px dashed var(--asp-line);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  dt {
+    font-size: 0.83rem;
+    color: var(--asp-ink-400);
+  }
+
+  dd {
+    margin: 0;
+    font-size: 0.86rem;
+    font-weight: 650;
+    text-align: right;
+  }
+}
+
+.progress-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: step;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.42rem 0;
+    font-size: 0.88rem;
+    color: var(--asp-ink-400);
+    cursor: default;
+
+    &.is-done {
+      color: var(--asp-ink-600);
+      cursor: pointer;
+    }
+
+    &.is-current {
+      color: var(--asp-blue-700);
+      font-weight: 700;
+    }
+  }
+
+  &__marker {
+    width: 24px;
+    height: 24px;
+    flex: none;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: var(--asp-surface);
+    color: var(--asp-ink-400);
+    border: 1px solid var(--asp-line);
+  }
+
+  .is-done &__marker {
+    background: var(--asp-green-100);
+    color: var(--asp-green-700);
+    border-color: transparent;
+  }
+
+  .is-current &__marker {
+    background: var(--asp-blue-700);
+    color: #fff;
+    border-color: transparent;
+  }
+}
+
+// --- Responsive --------------------------------------------------------------
+@media (max-width: 1080px) {
+  .apply-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .apply-aside {
+    position: static;
+    order: -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .apply-panel {
+    padding: 1.25rem;
+  }
+
+  .form-grid,
+  .review-block dl,
+  .confirmation__facts {
+    grid-template-columns: 1fr;
+  }
+
+  .upload-list li {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .apply-footer {
+    flex-direction: column-reverse;
+
+    ::ng-deep .p-button {
+      width: 100%;
+    }
+  }
+}

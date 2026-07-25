@@ -1,0 +1,173 @@
+@if (service(); as svc) {
+  <p-breadcrumb [model]="crumbs()" [home]="home" styleClass="mb-3" />
+
+  <!-- Hero ----------------------------------------------------------------- -->
+  <section class="asp-card detail-hero">
+    <div class="detail-hero__body">
+      <span class="detail-hero__eyebrow" [class]="'tint-' + (category()?.tint ?? 'blue')">
+        <i [class]="category()?.icon"></i>
+        {{ category()?.name }}
+      </span>
+
+      <h1>{{ svc.name }}</h1>
+      <p class="detail-hero__summary">{{ svc.summary }}</p>
+
+      <div class="detail-hero__facts">
+        <div>
+          <span class="label">Processing time</span>
+          <strong>{{ svc.processingTime }}</strong>
+        </div>
+        <div>
+          <span class="label">Total fees</span>
+          <strong>{{ totalFee() | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
+        </div>
+        <div>
+          <span class="label">Inspection</span>
+          <strong>{{ svc.requiresInspection ? 'Required' : 'Not required' }}</strong>
+        </div>
+      </div>
+
+      <div class="detail-hero__actions">
+        <p-button
+          label="Apply for this service"
+          icon="pi pi-arrow-right"
+          iconPos="right"
+          size="large"
+          [routerLink]="['/app/services', svc.slug, 'apply']"
+        />
+        <p-button
+          label="Back to services"
+          severity="secondary"
+          [outlined]="true"
+          size="large"
+          routerLink="/app/services"
+        />
+      </div>
+    </div>
+  </section>
+
+  <div class="detail-grid">
+    <div class="detail-main">
+      <!-- Description ------------------------------------------------------ -->
+      <section class="asp-card">
+        <h2>About this service</h2>
+        <p>{{ svc.description }}</p>
+      </section>
+
+      <!-- Eligibility ------------------------------------------------------ -->
+      <section class="asp-card">
+        <h2>Eligibility</h2>
+        <ul class="tick-list">
+          @for (item of svc.eligibility; track item) {
+            <li>{{ item }}</li>
+          }
+        </ul>
+      </section>
+
+      <!-- Requirements ----------------------------------------------------- -->
+      <section class="asp-card">
+        <h2>Requirements</h2>
+        <ul class="tick-list">
+          @for (item of svc.requirements; track item) {
+            <li>{{ item }}</li>
+          }
+        </ul>
+      </section>
+
+      <!-- Documents -------------------------------------------------------- -->
+      <section class="asp-card">
+        <h2>Documents you will need</h2>
+        <ul class="doc-list">
+          @for (doc of svc.documents; track doc) {
+            <li>
+              <i class="pi pi-file"></i>
+              <span>{{ doc }}</span>
+            </li>
+          }
+        </ul>
+        <p class="section-muted text-tiny mb-0">
+          Documents can be photographed with your phone. Make sure the whole page is in frame and
+          the text is readable.
+        </p>
+      </section>
+
+      <!-- FAQs ------------------------------------------------------------- -->
+      <section class="asp-card">
+        <h2>Frequently asked questions</h2>
+        <p-accordion [value]="'0'">
+          @for (faq of svc.faqs; track faq.question; let i = $index) {
+            <p-accordion-panel [value]="i.toString()">
+              <p-accordion-header>{{ faq.question }}</p-accordion-header>
+              <p-accordion-content>
+                <p class="mb-0 section-muted">{{ faq.answer }}</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+          }
+        </p-accordion>
+      </section>
+    </div>
+
+    <aside class="detail-aside">
+      <!-- Fees ------------------------------------------------------------- -->
+      <section class="asp-card">
+        <h2>Fees</h2>
+        <ul class="fee-list">
+          @for (fee of svc.fees; track fee.name) {
+            <li>
+              <span>
+                {{ fee.name }}
+                @if (fee.note) {
+                  <small>{{ fee.note }}</small>
+                }
+              </span>
+              <strong>{{ fee.amount | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
+            </li>
+          }
+        </ul>
+        <div class="fee-total">
+          <span>Total</span>
+          <strong>{{ totalFee() | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
+        </div>
+        <p class="section-muted text-tiny mb-0">
+          Fees are set by each Assembly in its annual fee-fixing resolution. The amounts shown are
+          illustrative.
+        </p>
+      </section>
+
+      <!-- What happens next ------------------------------------------------ -->
+      <section class="asp-card">
+        <h2>What happens next</h2>
+        <ol class="step-list">
+          <li>You complete the application and upload your documents.</li>
+          <li>The Assembly reviews what you submitted.</li>
+          @if (svc.requiresInspection) {
+            <li>An officer inspects the premises and records the outcome.</li>
+          }
+          <li>An invoice is raised and you settle it online.</li>
+          <li>The application is approved and your certificate issued.</li>
+        </ol>
+      </section>
+
+      <section class="asp-card need-help">
+        <h2>Need help?</h2>
+        <p class="section-muted">
+          If you are not sure this is the right service, support can point you to the right one.
+        </p>
+        <p-button
+          label="Contact support"
+          severity="secondary"
+          [outlined]="true"
+          styleClass="w-full"
+          routerLink="/app/help"
+        />
+      </section>
+    </aside>
+  </div>
+} @else {
+  <div class="asp-card empty">
+    <i class="pi pi-exclamation-triangle"></i>
+    <h2>Service not found</h2>
+    <p class="section-muted">That service is not in the catalogue.</p>
+    <p-button label="Back to services" routerLink="/app/services" />
+  </div>
+}

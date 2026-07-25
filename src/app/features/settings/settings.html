@@ -1,0 +1,203 @@
+<div class="page-header">
+  <div>
+    <h1>Settings</h1>
+    <p>How the portal looks and behaves for you. Preferences are kept on this device.</p>
+  </div>
+  <p-button
+    label="Reset to defaults"
+    icon="pi pi-refresh"
+    severity="secondary"
+    [outlined]="true"
+    (onClick)="resetDefaults()"
+  />
+</div>
+
+<div class="settings-grid">
+  <!-- Language ------------------------------------------------------------- -->
+  <section class="asp-card setting">
+    <header>
+      <span class="setting__icon tint-blue"><i class="pi pi-globe"></i></span>
+      <div>
+        <h2>Language</h2>
+        <p>The language the portal is displayed in.</p>
+      </div>
+    </header>
+
+    <div class="setting__control">
+      <label for="language">Display language</label>
+      <p-select
+        inputId="language"
+        [options]="languages"
+        optionLabel="label"
+        optionValue="value"
+        [ngModel]="ui.prefs().language"
+        (ngModelChange)="setLanguage($event)"
+        styleClass="w-full"
+        appendTo="body"
+      />
+      <small class="hint">
+        Content is currently available in English. Other languages are being prepared.
+      </small>
+    </div>
+  </section>
+
+  <!-- Theme ---------------------------------------------------------------- -->
+  <section class="asp-card setting">
+    <header>
+      <span class="setting__icon tint-gold"><i class="pi pi-palette"></i></span>
+      <div>
+        <h2>Theme</h2>
+        <p>Choose a light or dark appearance.</p>
+      </div>
+    </header>
+
+    <div class="theme-choice">
+      <button
+        type="button"
+        class="theme-card"
+        [class.is-selected]="!ui.prefs().darkMode"
+        (click)="setTheme(false)"
+      >
+        <span class="theme-card__preview theme-card__preview--light" aria-hidden="true"></span>
+        <strong>Light</strong>
+        <small>Best in daylight</small>
+      </button>
+
+      <button
+        type="button"
+        class="theme-card"
+        [class.is-selected]="ui.prefs().darkMode"
+        (click)="setTheme(true)"
+      >
+        <span class="theme-card__preview theme-card__preview--dark" aria-hidden="true"></span>
+        <strong>Dark</strong>
+        <small>Easier on the eyes at night</small>
+      </button>
+    </div>
+  </section>
+
+  <!-- Accessibility -------------------------------------------------------- -->
+  <section class="asp-card setting setting--wide">
+    <header>
+      <span class="setting__icon tint-green"><i class="pi pi-eye"></i></span>
+      <div>
+        <h2>Accessibility</h2>
+        <p>Adjustments that make the portal easier to read and use.</p>
+      </div>
+    </header>
+
+    <ul class="switch-list">
+      <li>
+        <div>
+          <strong>Larger text</strong>
+          <small>Increases the base text size across the portal.</small>
+        </div>
+        <p-toggleswitch
+          [ngModel]="ui.prefs().largeText"
+          (ngModelChange)="toggle('largeText', $event)"
+        />
+      </li>
+      <li>
+        <div>
+          <strong>Higher contrast</strong>
+          <small>Strengthens borders and text contrast.</small>
+        </div>
+        <p-toggleswitch
+          [ngModel]="ui.prefs().highContrast"
+          (ngModelChange)="toggle('highContrast', $event)"
+        />
+      </li>
+      <li>
+        <div>
+          <strong>Reduce motion</strong>
+          <small>Turns off transitions and animated effects.</small>
+        </div>
+        <p-toggleswitch
+          [ngModel]="ui.prefs().reduceMotion"
+          (ngModelChange)="toggle('reduceMotion', $event)"
+        />
+      </li>
+    </ul>
+
+    <p class="section-muted text-tiny mb-0">
+      If your device or browser already asks for reduced motion, the portal respects that
+      automatically.
+    </p>
+  </section>
+
+  <!-- Notifications --------------------------------------------------------- -->
+  <section class="asp-card setting setting--wide">
+    <header>
+      <span class="setting__icon tint-blue"><i class="pi pi-bell"></i></span>
+      <div>
+        <h2>Notifications</h2>
+        <p>How the Assembly reaches you about your applications and payments.</p>
+      </div>
+    </header>
+
+    <ul class="switch-list">
+      <li>
+        <div>
+          <strong>Email</strong>
+          <small>{{ user()?.email }}</small>
+        </div>
+        <p-toggleswitch
+          [ngModel]="ui.prefs().emailNotifications"
+          (ngModelChange)="toggleNotification('emailNotifications', $event)"
+        />
+      </li>
+      <li>
+        <div>
+          <strong>SMS</strong>
+          <small>{{ user()?.phone }}</small>
+        </div>
+        <p-toggleswitch
+          [ngModel]="ui.prefs().smsNotifications"
+          (ngModelChange)="toggleNotification('smsNotifications', $event)"
+        />
+      </li>
+      <li>
+        <div>
+          <strong>Push notifications</strong>
+          <small>Alerts in this browser while the portal is open.</small>
+        </div>
+        <p-toggleswitch
+          [ngModel]="ui.prefs().pushNotifications"
+          (ngModelChange)="toggleNotification('pushNotifications', $event)"
+        />
+      </li>
+    </ul>
+
+    <p class="section-muted text-tiny mb-0">
+      Statutory notices — rate demands and inspection appointments — are always sent regardless of
+      these settings.
+    </p>
+  </section>
+
+  <!-- About ----------------------------------------------------------------- -->
+  <section class="asp-card setting setting--wide about">
+    <header>
+      <span class="setting__icon tint-grey"><i class="pi pi-info-circle"></i></span>
+      <div>
+        <h2>About this portal</h2>
+        <p>{{ env.tagline }}</p>
+      </div>
+    </header>
+
+    <dl class="about__facts">
+      <div><dt>Application</dt><dd>{{ env.appName }} ({{ env.appShortName }})</dd></div>
+      <div><dt>Version</dt><dd>{{ env.appVersion }}</dd></div>
+      <div><dt>Signed in as</dt><dd>{{ user()?.email }}</dd></div>
+      <div><dt>Assembly</dt><dd>{{ user()?.assembly }}</dd></div>
+    </dl>
+
+    <p class="demo-note">
+      <i class="pi pi-exclamation-circle"></i>
+      <span>
+        <strong>Demonstration build.</strong>
+        Every figure and record in this portal is sample data. Nothing is submitted to an Assembly
+        and no payment is taken.
+      </span>
+    </p>
+  </section>
+</div>

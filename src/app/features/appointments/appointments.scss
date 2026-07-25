@@ -1,0 +1,295 @@
+.tab-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  margin-left: 0.45rem;
+  border-radius: 999px;
+  background: var(--asp-gold-600);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+// --- List --------------------------------------------------------------------
+.appointment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+.appointment {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  border-left: 4px solid var(--asp-blue-700);
+
+  &--past {
+    border-left-color: var(--asp-line);
+    opacity: 0.9;
+  }
+
+  &__date {
+    width: 62px;
+    flex: none;
+    text-align: center;
+    padding: 0.6rem 0;
+    border-radius: var(--asp-radius-sm);
+    background: var(--asp-blue-100);
+    color: var(--asp-blue-700);
+
+    strong {
+      display: block;
+      font-size: 1.55rem;
+      line-height: 1;
+      font-weight: 800;
+    }
+
+    small {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+
+    h3 {
+      font-size: 1.05rem;
+      margin: 0.5rem 0 0.7rem;
+    }
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  &__kind {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 700;
+  }
+
+  ::ng-deep .appointment__status {
+    text-transform: capitalize;
+  }
+
+  &__meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem 1.5rem;
+    margin: 0 0 0.75rem;
+
+    > div {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-width: 0;
+    }
+
+    dt {
+      color: var(--asp-ink-400);
+      font-size: 0.85rem;
+    }
+
+    dd {
+      margin: 0;
+      font-size: 0.88rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &__note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.7rem 0.9rem;
+    border-radius: var(--asp-radius-sm);
+    background: var(--asp-gold-100);
+    color: var(--asp-gold-700);
+    font-size: 0.85rem;
+    line-height: 1.45;
+
+    &--done {
+      background: var(--asp-green-100);
+      color: var(--asp-green-700);
+    }
+  }
+
+  &__actions {
+    flex: none;
+  }
+}
+
+.mono {
+  font-variant-numeric: tabular-nums;
+}
+
+// --- Calendar ----------------------------------------------------------------
+.calendar-card {
+  margin-top: 1rem;
+}
+
+.calendar-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+
+  h2 {
+    font-size: 1.15rem;
+    margin: 0;
+    min-width: 200px;
+    text-align: center;
+  }
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+
+  &__weekday {
+    text-align: center;
+    padding: 0.5rem 0;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--asp-ink-400);
+  }
+}
+
+.calendar-cell {
+  min-height: 96px;
+  padding: 0.4rem;
+  border: 1px solid var(--asp-line);
+  border-radius: 8px;
+  background: var(--asp-card);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  &.is-empty {
+    background: transparent;
+    border-color: transparent;
+  }
+
+  &.is-today {
+    border-color: var(--asp-blue-700);
+    box-shadow: 0 0 0 1px var(--asp-blue-700) inset;
+  }
+
+  &.has-events {
+    background: var(--asp-blue-050);
+  }
+
+  &__number {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--asp-ink-500);
+  }
+}
+
+.calendar-event {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.35rem;
+  border-radius: 5px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  i {
+    font-size: 0.62rem;
+    flex: none;
+  }
+}
+
+.calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--asp-line);
+  font-size: 0.82rem;
+  color: var(--asp-ink-500);
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+}
+
+.empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  margin-top: 1rem;
+
+  i {
+    font-size: 2.2rem;
+    color: var(--asp-ink-400);
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+}
+
+// --- Responsive --------------------------------------------------------------
+@media (max-width: 820px) {
+  .appointment {
+    flex-wrap: wrap;
+
+    &__actions {
+      width: 100%;
+
+      ::ng-deep .p-button {
+        width: 100%;
+      }
+    }
+
+    &__meta {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .calendar-cell {
+    min-height: 72px;
+  }
+
+  .calendar-event {
+    font-size: 0;
+    padding: 0.25rem;
+
+    i {
+      font-size: 0.7rem;
+    }
+  }
+}

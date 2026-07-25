@@ -1,0 +1,121 @@
+<div class="page-header">
+  <div>
+    <h1>Available services</h1>
+    <p>Everything you can apply for, pay for or request from your District Assembly.</p>
+  </div>
+</div>
+
+<!-- Filters ---------------------------------------------------------------- -->
+<section class="asp-card filters">
+  <span class="p-input-icon-left search-wrap">
+    <i class="pi pi-search" aria-hidden="true"></i>
+    <input
+      pInputText
+      type="search"
+      [ngModel]="term()"
+      (ngModelChange)="term.set($event)"
+      placeholder="Search services — try “permit”, “rates” or “burial”"
+      aria-label="Search services"
+    />
+  </span>
+
+  <div class="chips" role="group" aria-label="Filter by category">
+    <button
+      type="button"
+      class="chip"
+      [class.is-active]="activeCategory() === 'all'"
+      (click)="setCategory('all')"
+    >
+      All services
+    </button>
+    @for (category of portal.categories; track category.id) {
+      <button
+        type="button"
+        class="chip"
+        [class.is-active]="activeCategory() === category.id"
+        (click)="setCategory(category.id)"
+      >
+        {{ category.name }}
+      </button>
+    }
+  </div>
+</section>
+
+@if (term() || activeCategory() !== 'all') {
+  <p class="result-line" role="status">
+    {{ matchCount() }} {{ matchCount() === 1 ? 'service matches' : 'services match' }}
+    your filter.
+    <button type="button" class="link-btn" (click)="clear()">Clear</button>
+  </p>
+}
+
+<!-- Groups ----------------------------------------------------------------- -->
+@for (group of groups(); track group.category.id) {
+  <section class="category">
+    <header class="category__head">
+      <span class="category__icon" [class]="'tint-' + group.category.tint">
+        <i [class]="group.category.icon"></i>
+      </span>
+      <div>
+        <h2>{{ group.category.name }}</h2>
+        <p>{{ group.category.description }}</p>
+      </div>
+    </header>
+
+    <div class="service-grid">
+      @for (service of group.services; track service.id) {
+        <article class="asp-card service-card">
+          <header>
+            <h3>{{ service.name }}</h3>
+            @if (service.popular) {
+              <p-tag value="Popular" severity="success" styleClass="text-tiny" />
+            }
+          </header>
+
+          <p class="service-card__summary">{{ service.summary }}</p>
+
+          <dl class="service-card__meta">
+            <div>
+              <dt>Processing</dt>
+              <dd>{{ service.processingTime }}</dd>
+            </div>
+            <div>
+              <dt>From</dt>
+              <dd>GHS {{ service.fees[0].amount }}</dd>
+            </div>
+          </dl>
+
+          @if (service.requiresInspection) {
+            <p class="service-card__note">
+              <i class="pi pi-info-circle"></i> Requires a premises inspection
+            </p>
+          }
+
+          <footer>
+            <p-button
+              label="View details"
+              severity="secondary"
+              [outlined]="true"
+              size="small"
+              [routerLink]="['/app/services', service.slug]"
+            />
+            <p-button
+              label="Apply"
+              icon="pi pi-arrow-right"
+              iconPos="right"
+              size="small"
+              [routerLink]="['/app/services', service.slug, 'apply']"
+            />
+          </footer>
+        </article>
+      }
+    </div>
+  </section>
+} @empty {
+  <div class="asp-card empty">
+    <i class="pi pi-search"></i>
+    <h3>No services match your search</h3>
+    <p class="section-muted">Try a different word, or clear the filter to see everything.</p>
+    <p-button label="Clear filter" severity="secondary" [outlined]="true" (onClick)="clear()" />
+  </div>
+}

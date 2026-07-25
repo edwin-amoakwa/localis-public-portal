@@ -1,0 +1,96 @@
+<div class="page-header">
+  <div>
+    <h1>Messages</h1>
+    <p>Correspondence with the officers handling your applications.</p>
+  </div>
+</div>
+
+<div class="messages" [class.show-conversation]="showConversation()">
+  <!-- Thread list ---------------------------------------------------------- -->
+  <aside class="asp-card asp-card--flush thread-list">
+    <header>
+      <h2>Conversations</h2>
+      <span>{{ threads().length }}</span>
+    </header>
+
+    <ul>
+      @for (thread of threads(); track thread.id) {
+        <li>
+          <button
+            type="button"
+            [class.is-active]="thread.id === selectedId()"
+            [class.is-unread]="thread.unread"
+            (click)="select(thread.id)"
+          >
+            <p-avatar [label]="initials(thread.officer)" shape="circle" styleClass="thread-avatar" />
+            <span class="thread-list__body">
+              <span class="thread-list__head">
+                <strong>{{ thread.subject }}</strong>
+                @if (thread.unread) {
+                  <span class="dot" aria-label="Unread"></span>
+                }
+              </span>
+              <small>{{ thread.officer }} &middot; {{ thread.assembly }}</small>
+              <time>{{ thread.lastMessageDate }}</time>
+            </span>
+          </button>
+        </li>
+      }
+    </ul>
+  </aside>
+
+  <!-- Conversation --------------------------------------------------------- -->
+  <section class="asp-card asp-card--flush conversation">
+    @if (selected(); as thread) {
+      <header class="conversation__head">
+        <button type="button" class="back-btn" (click)="backToList()" aria-label="Back to conversations">
+          <i class="pi pi-arrow-left"></i>
+        </button>
+        <div>
+          <h2>{{ thread.subject }}</h2>
+          <small>{{ thread.officer }} &middot; {{ thread.assembly }}</small>
+        </div>
+      </header>
+
+      <div class="conversation__body">
+        @for (message of thread.messages; track message.id) {
+          <article class="bubble" [class.bubble--mine]="message.from === 'ME'">
+            <header>
+              <strong>{{ message.author }}</strong>
+              <time>{{ message.date }}</time>
+            </header>
+            <p>{{ message.body }}</p>
+          </article>
+        }
+      </div>
+
+      <footer class="conversation__reply">
+        <textarea
+          pTextarea
+          rows="3"
+          [ngModel]="draft()"
+          (ngModelChange)="draft.set($event)"
+          placeholder="Write a reply to the Assembly…"
+          aria-label="Your reply"
+        ></textarea>
+        <div class="conversation__reply-actions">
+          <small class="section-muted">
+            Replies are recorded against this application and seen by the officer handling it.
+          </small>
+          <p-button
+            label="Send reply"
+            icon="pi pi-send"
+            [disabled]="!draft().trim()"
+            (onClick)="send()"
+          />
+        </div>
+      </footer>
+    } @else {
+      <div class="empty">
+        <i class="pi pi-comments"></i>
+        <h3>No conversation selected</h3>
+        <p class="section-muted mb-0">Choose a conversation from the list.</p>
+      </div>
+    }
+  </section>
+</div>

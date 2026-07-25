@@ -1,0 +1,144 @@
+<header class="topbar">
+  <div class="topbar__left">
+    <button
+      class="icon-btn topbar__burger"
+      type="button"
+      aria-label="Toggle menu"
+      (click)="toggleSidebar()"
+    >
+      <i class="pi pi-bars"></i>
+    </button>
+
+    <a class="brand" routerLink="/app/dashboard">
+      <span class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64" width="34" height="34">
+          <rect width="64" height="64" rx="15" fill="#0F4C81" />
+          <path d="M32 12 51 22H13z" fill="#fff" />
+          <rect x="17" y="26" width="5" height="18" rx="1" fill="#fff" />
+          <rect x="26" y="26" width="5" height="18" rx="1" fill="#fff" />
+          <rect x="35" y="26" width="5" height="18" rx="1" fill="#fff" />
+          <rect x="44" y="26" width="5" height="18" rx="1" fill="#fff" />
+          <rect x="12" y="47" width="40" height="5" rx="2" fill="#0E9F6E" />
+          <circle cx="32" cy="19" r="2.6" fill="#C9A227" />
+        </svg>
+      </span>
+      <span class="brand__text">
+        Assembly Services Portal
+        <small>{{ user()?.assembly }}</small>
+      </span>
+    </a>
+  </div>
+
+  <nav class="topbar__nav" aria-label="Main">
+    <a routerLink="/app/dashboard" routerLinkActive="is-active">Dashboard</a>
+    <a routerLink="/app/services" routerLinkActive="is-active">Services</a>
+    <a routerLink="/app/applications" routerLinkActive="is-active">Applications</a>
+    <a routerLink="/app/payments" routerLinkActive="is-active">Payments</a>
+    <a routerLink="/app/documents" routerLinkActive="is-active">Documents</a>
+    <a routerLink="/app/appointments" routerLinkActive="is-active">Appointments</a>
+  </nav>
+
+  <div class="topbar__right">
+    <button
+      class="icon-btn"
+      type="button"
+      [pTooltip]="ui.prefs().darkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+      tooltipPosition="bottom"
+      aria-label="Toggle colour theme"
+      (click)="ui.toggleDarkMode()"
+    >
+      <i class="pi" [class.pi-moon]="!ui.prefs().darkMode" [class.pi-sun]="ui.prefs().darkMode"></i>
+    </button>
+
+    <a
+      class="icon-btn"
+      routerLink="/app/help"
+      pTooltip="Help centre"
+      tooltipPosition="bottom"
+      aria-label="Help centre"
+    >
+      <i class="pi pi-question-circle"></i>
+    </a>
+
+    <a
+      class="icon-btn"
+      routerLink="/app/notifications"
+      pTooltip="Notifications"
+      tooltipPosition="bottom"
+      [attr.aria-label]="'Notifications, ' + unreadCount() + ' unread'"
+    >
+      <i class="pi pi-bell"></i>
+      @if (unreadCount() > 0) {
+        <span class="icon-btn__dot">{{ unreadCount() }}</span>
+      }
+    </a>
+
+    <button
+      class="profile-btn"
+      type="button"
+      aria-haspopup="true"
+      aria-label="Account menu"
+      (click)="profileOverlay.toggle($event)"
+    >
+      <p-avatar
+        [label]="user()?.avatarInitials"
+        shape="circle"
+        styleClass="profile-btn__avatar"
+      />
+      <span class="profile-btn__name">
+        {{ user()?.firstName }} {{ user()?.lastName }}
+        <small>{{ user()?.accountType?.replace('_', ' ') | lowercase }}</small>
+      </span>
+      <i class="pi pi-angle-down"></i>
+    </button>
+    <p-menu #profileOverlay [model]="profileMenu" [popup]="true" appendTo="body" />
+  </div>
+</header>
+
+<div class="shell-body">
+  <!-- Backdrop for the off-canvas sidebar on small screens -->
+  @if (ui.mobileMenuOpen()) {
+    <div class="sidebar-backdrop" (click)="closeSidebar()" aria-hidden="true"></div>
+  }
+
+  <aside class="sidebar" [class.is-open]="ui.mobileMenuOpen()" aria-label="Sections">
+    <nav class="sidebar__nav">
+      @for (item of navItems; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="is-active"
+          class="sidebar__link"
+          (click)="closeSidebar()"
+        >
+          <i [class]="item.icon"></i>
+          <span>{{ item.label }}</span>
+          @if (item.badge && item.badge()! > 0) {
+            <span class="sidebar__badge">{{ item.badge() }}</span>
+          }
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar__promo">
+      <i class="pi pi-info-circle"></i>
+      <div>
+        <strong>Demonstration build</strong>
+        <p>Every figure on screen is sample data. Nothing is submitted to an Assembly.</p>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content" id="main-content">
+    <router-outlet />
+  </main>
+</div>
+
+<p-speeddial
+  [model]="speedDialItems"
+  direction="up"
+  buttonClassName="p-button-primary"
+  [style]="{ position: 'fixed', right: '1.5rem', bottom: '1.5rem', zIndex: 60 }"
+  showIcon="pi pi-bolt"
+  hideIcon="pi pi-times"
+  ariaLabel="Quick actions"
+/>

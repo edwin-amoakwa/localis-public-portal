@@ -1,0 +1,221 @@
+<div class="page-header">
+  <div>
+    <h1>Help centre</h1>
+    <p>Answers to common questions, and a direct line to support when you need one.</p>
+  </div>
+</div>
+
+<div class="help-grid">
+  <div class="help-main">
+    <!-- FAQs ------------------------------------------------------------- -->
+    <section class="asp-card">
+      <h2>Frequently asked questions</h2>
+
+      <span class="search-wrap">
+        <i class="pi pi-search" aria-hidden="true"></i>
+        <input
+          pInputText
+          type="search"
+          [ngModel]="term()"
+          (ngModelChange)="term.set($event)"
+          [ngModelOptions]="{ standalone: true }"
+          placeholder="Search the FAQs"
+          aria-label="Search frequently asked questions"
+        />
+      </span>
+
+      @for (group of faqGroups(); track group.name) {
+        <h3 class="faq-group">{{ group.name }}</h3>
+        <p-accordion>
+          @for (faq of group.faqs; track faq.question) {
+            <p-accordion-panel [value]="faq.question">
+              <p-accordion-header>{{ faq.question }}</p-accordion-header>
+              <p-accordion-content>
+                <p class="mb-0 section-muted">{{ faq.answer }}</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+          }
+        </p-accordion>
+      } @empty {
+        <div class="empty">
+          <i class="pi pi-search"></i>
+          <h3>No answers match “{{ term() }}”</h3>
+          <p class="section-muted mb-0">
+            Try a different word, or send us a support request below.
+          </p>
+        </div>
+      }
+    </section>
+
+    <!-- Support request --------------------------------------------------- -->
+    <section class="asp-card">
+      <h2>Send a support request</h2>
+      <p class="section-muted">
+        We reply within one working day. For a decision on an application or a fee charged, contact
+        your Assembly directly — support cannot change either.
+      </p>
+
+      <form [formGroup]="supportForm" (ngSubmit)="submitSupport()">
+        <div class="field-row">
+          <div class="field">
+            <label for="topic">What is it about?</label>
+            <p-select
+              inputId="topic"
+              formControlName="topic"
+              [options]="topics"
+              styleClass="w-full"
+              appendTo="body"
+            />
+          </div>
+          <div class="field">
+            <label for="reference">Reference (optional)</label>
+            <input
+              pInputText
+              id="reference"
+              formControlName="reference"
+              placeholder="e.g. ASP-2026-000124"
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="message">Tell us what has happened</label>
+          <textarea
+            pTextarea
+            id="message"
+            formControlName="message"
+            rows="5"
+            placeholder="Describe the problem, including anything you have already tried."
+          ></textarea>
+          @if (supportForm.controls.message.touched && supportForm.controls.message.invalid) {
+            <small class="field-error">
+              Please describe the problem in a little more detail.
+            </small>
+          }
+          <small class="hint">
+            Never include your password, PIN or full card number in a support request.
+          </small>
+        </div>
+
+        <p-button
+          type="submit"
+          label="Send request"
+          icon="pi pi-send"
+          [loading]="submitting()"
+        />
+      </form>
+    </section>
+  </div>
+
+  <!-- Sidebar -------------------------------------------------------------- -->
+  <aside class="help-aside">
+    <section class="asp-card">
+      <h2>Contact support</h2>
+      <ul class="contact-list">
+        <li>
+          <span class="contact-list__icon tint-blue"><i class="pi pi-envelope"></i></span>
+          <div>
+            <strong>Email</strong>
+            <a [href]="'mailto:' + env.supportEmail">{{ env.supportEmail }}</a>
+          </div>
+        </li>
+        <li>
+          <span class="contact-list__icon tint-green"><i class="pi pi-phone"></i></span>
+          <div>
+            <strong>Telephone</strong>
+            <a [href]="'tel:' + env.supportPhone">{{ env.supportPhone }}</a>
+          </div>
+        </li>
+        <li>
+          <span class="contact-list__icon tint-gold"><i class="pi pi-clock"></i></span>
+          <div>
+            <strong>Opening hours</strong>
+            <small>Monday to Friday, 08:00&ndash;17:00 GMT</small>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="asp-card">
+      <h2>Your Assembly</h2>
+      <p class="section-muted text-tiny">
+        Questions about a decision, a fee or a record are handled by the Assembly itself.
+      </p>
+      <div class="assembly-box">
+        <strong>{{ user()?.assembly }}</strong>
+        <small>{{ user()?.region }}</small>
+      </div>
+      <p-button
+        label="Message the Assembly"
+        icon="pi pi-comments"
+        severity="secondary"
+        [outlined]="true"
+        styleClass="w-full"
+        routerLink="/app/messages"
+      />
+    </section>
+
+    <section class="asp-card safety">
+      <h2>Stay safe</h2>
+      <ul>
+        <li>Assembly staff will never ask for your password or PIN.</li>
+        <li>Pay fees only through the portal or at an official revenue desk.</li>
+        <li>Every genuine payment carries an Assembly receipt number.</li>
+      </ul>
+    </section>
+  </aside>
+</div>
+
+<!-- Live chat -------------------------------------------------------------- -->
+<div class="chat" [class.is-open]="chatOpen()">
+  @if (chatOpen()) {
+    <div class="chat__panel">
+      <header class="chat__head">
+        <p-avatar label="AS" shape="circle" styleClass="chat__avatar" />
+        <div>
+          <strong>ASP Support</strong>
+          <small><span class="online-dot"></span> Usually replies in a few minutes</small>
+        </div>
+        <button type="button" class="chat__close" (click)="toggleChat()" aria-label="Close chat">
+          <i class="pi pi-times"></i>
+        </button>
+      </header>
+
+      <div class="chat__body">
+        @for (line of chat(); track $index) {
+          <div class="chat__line" [class.chat__line--mine]="line.from === 'ME'">
+            <p>{{ line.body }}</p>
+            <time>{{ line.time }}</time>
+          </div>
+        }
+      </div>
+
+      <footer class="chat__foot">
+        <input
+          pInputText
+          [ngModel]="chatDraft()"
+          (ngModelChange)="chatDraft.set($event)"
+          [ngModelOptions]="{ standalone: true }"
+          (keyup.enter)="sendChat()"
+          placeholder="Type your message…"
+          aria-label="Chat message"
+        />
+        <p-button
+          icon="pi pi-send"
+          [rounded]="true"
+          ariaLabel="Send message"
+          (onClick)="sendChat()"
+        />
+      </footer>
+
+      <p class="chat__note">Demonstration chat — replies are automated.</p>
+    </div>
+  }
+
+  <button type="button" class="chat__launcher" (click)="toggleChat()">
+    <i class="pi" [class.pi-comments]="!chatOpen()" [class.pi-chevron-down]="chatOpen()"></i>
+    @if (!chatOpen()) {
+      <span>Live chat</span>
+    }
+  </button>
+</div>

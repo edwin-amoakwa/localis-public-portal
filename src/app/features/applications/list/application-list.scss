@@ -1,0 +1,96 @@
+.summary-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+
+  &__item {
+    padding: 1.1rem 1.25rem;
+  }
+}
+
+.table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.1rem 1.4rem;
+  border-bottom: 1px solid var(--asp-line);
+}
+
+.search-wrap {
+  flex: 1 1 300px;
+  position: relative;
+  display: block;
+
+  i {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--asp-ink-400);
+    pointer-events: none;
+  }
+
+  input {
+    width: 100%;
+    padding-left: 2.4rem;
+  }
+}
+
+::ng-deep .status-filter {
+  min-width: 200px;
+}
+
+.mono {
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+}
+
+.cell-sub {
+  display: block;
+  color: var(--asp-ink-400);
+  font-size: 0.78rem;
+  margin-top: 2px;
+
+  &--due {
+    color: #c0342c;
+    font-weight: 600;
+  }
+}
+
+.text-right {
+  text-align: right;
+}
+
+.empty {
+  text-align: center;
+  padding: 3rem 1rem;
+
+  i {
+    font-size: 2.2rem;
+    color: var(--asp-ink-400);
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+
+  h3 {
+    margin-bottom: 0.3rem;
+  }
+
+  p {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 1080px) {
+  .summary-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .summary-strip {
+    grid-template-columns: 1fr;
+  }
+}

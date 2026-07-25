@@ -1,0 +1,205 @@
+.pay-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+
+  &__card {
+    .label {
+      display: block;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--asp-ink-400);
+      margin-bottom: 0.3rem;
+    }
+
+    strong {
+      display: block;
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    small {
+      color: var(--asp-ink-400);
+      font-size: 0.82rem;
+    }
+
+    &--due strong {
+      color: #c0342c;
+    }
+  }
+}
+
+.tab-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  margin-left: 0.45rem;
+  border-radius: 999px;
+  background: #c0342c;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+// --- Outstanding invoices ----------------------------------------------------
+.invoice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+.invoice-card {
+  display: flex;
+  flex-direction: column;
+  border-left: 4px solid var(--asp-gold-600);
+
+  header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.9rem;
+
+    h3 {
+      font-size: 1rem;
+      margin: 0.2rem 0 0;
+    }
+  }
+
+  &__items {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.9rem;
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.4rem 0;
+      font-size: 0.88rem;
+      border-bottom: 1px dashed var(--asp-line);
+      color: var(--asp-ink-500);
+    }
+  }
+
+  &__figures {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin: 0 0 1rem;
+
+    dt {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--asp-ink-400);
+      margin-bottom: 0.15rem;
+    }
+
+    dd {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+
+      &.due {
+        color: #c0342c;
+      }
+    }
+  }
+
+  footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: auto;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--asp-line);
+  }
+
+  &__due {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.84rem;
+    color: var(--asp-ink-500);
+  }
+}
+
+.mono {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.82rem;
+  color: var(--asp-ink-400);
+  font-weight: 600;
+}
+
+td.mono {
+  font-size: 0.88rem;
+  color: var(--asp-ink);
+}
+
+.cell-sub {
+  display: block;
+  color: var(--asp-ink-400);
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+
+.method {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.87rem;
+
+  i {
+    color: var(--asp-green-700);
+  }
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  margin-top: 1rem;
+
+  i {
+    font-size: 2.2rem;
+    color: var(--asp-green-600);
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+}
+
+@media (max-width: 1080px) {
+  .pay-summary,
+  .invoice-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .invoice-card footer {
+    flex-direction: column;
+    align-items: stretch;
+
+    ::ng-deep .p-button {
+      width: 100%;
+    }
+  }
+}

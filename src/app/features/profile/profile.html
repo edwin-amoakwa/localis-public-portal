@@ -1,0 +1,293 @@
+<div class="page-header">
+  <div>
+    <h1>My profile</h1>
+    <p>Your details, businesses, properties and security settings.</p>
+  </div>
+</div>
+
+<!-- Identity card ---------------------------------------------------------- -->
+<section class="asp-card identity">
+  <p-avatar [label]="user()?.avatarInitials" shape="circle" styleClass="identity__avatar" />
+  <div class="identity__body">
+    <h2>{{ user()?.firstName }} {{ user()?.lastName }}</h2>
+    <p>{{ user()?.email }} &middot; {{ user()?.phone }}</p>
+    <div class="identity__tags">
+      <p-tag [value]="accountTypeLabel()" severity="info" />
+      <p-tag [value]="user()?.assembly" severity="secondary" />
+    </div>
+  </div>
+  <dl class="identity__meta">
+    <div>
+      <dt>Ghana Card</dt>
+      <dd class="mono">{{ user()?.ghanaCardNo }}</dd>
+    </div>
+    <div>
+      <dt>Member since</dt>
+      <dd>{{ user()?.memberSince | date: 'MMMM y' }}</dd>
+    </div>
+  </dl>
+</section>
+
+<p-tabs value="0">
+  <p-tablist>
+    <p-tab value="0">Personal details</p-tab>
+    <p-tab value="1">Businesses</p-tab>
+    <p-tab value="2">Properties</p-tab>
+    <p-tab value="3">Security</p-tab>
+    <p-tab value="4">Notifications</p-tab>
+  </p-tablist>
+
+  <p-tabpanels>
+    <!-- Personal ---------------------------------------------------------- -->
+    <p-tabpanel value="0">
+      <section class="asp-card panel">
+        <h2>Personal details</h2>
+        <p class="section-muted">
+          Your Ghana Card number, region and Assembly are fixed on the account. Contact support if
+          any of them is wrong.
+        </p>
+
+        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="form-grid">
+          <div class="field">
+            <label for="firstName">First name</label>
+            <input pInputText id="firstName" formControlName="firstName" />
+          </div>
+          <div class="field">
+            <label for="lastName">Last name</label>
+            <input pInputText id="lastName" formControlName="lastName" />
+          </div>
+          <div class="field">
+            <label for="email">Email address</label>
+            <input pInputText id="email" type="email" formControlName="email" />
+          </div>
+          <div class="field">
+            <label for="phone">Phone number</label>
+            <input pInputText id="phone" formControlName="phone" />
+          </div>
+          <div class="field">
+            <label for="ghanaCard">Ghana Card number</label>
+            <input pInputText id="ghanaCard" formControlName="ghanaCardNo" />
+          </div>
+          <div class="field">
+            <label for="digital">Digital address</label>
+            <input pInputText id="digital" formControlName="digitalAddress" />
+          </div>
+          <div class="field field--full">
+            <label for="address">Residential address</label>
+            <input pInputText id="address" formControlName="residentialAddress" />
+          </div>
+          <div class="field">
+            <label for="region">Region</label>
+            <input pInputText id="region" formControlName="region" />
+          </div>
+          <div class="field">
+            <label for="assembly">District Assembly</label>
+            <input pInputText id="assembly" formControlName="assembly" />
+          </div>
+
+          <div class="field--full form-actions">
+            <p-button
+              type="submit"
+              label="Save changes"
+              icon="pi pi-check"
+              [loading]="savingProfile()"
+            />
+          </div>
+        </form>
+      </section>
+    </p-tabpanel>
+
+    <!-- Businesses -------------------------------------------------------- -->
+    <p-tabpanel value="1">
+      <div class="record-grid">
+        @for (business of portal.businesses(); track business.id) {
+          <article class="asp-card record">
+            <header>
+              <span class="record__icon tint-blue"><i class="pi pi-briefcase"></i></span>
+              <p-tag
+                [value]="business.status === 'ACTIVE' ? 'Active' : 'Inactive'"
+                [severity]="business.status === 'ACTIVE' ? 'success' : 'secondary'"
+                styleClass="text-tiny"
+              />
+            </header>
+            <h3>{{ business.businessName }}</h3>
+            <p class="record__ref">{{ business.businessNumber }}</p>
+            <dl class="record__meta">
+              <div><dt>Category</dt><dd>{{ business.category }}</dd></div>
+              <div><dt>Ownership</dt><dd>{{ business.ownershipType }}</dd></div>
+              <div><dt>Registration</dt><dd>{{ business.registrationNo }}</dd></div>
+              <div><dt>TIN</dt><dd>{{ business.tinNo }}</dd></div>
+              <div><dt>Location</dt><dd>{{ business.location }}</dd></div>
+              <div><dt>Employees</dt><dd>{{ business.employees }}</dd></div>
+            </dl>
+          </article>
+        } @empty {
+          <div class="asp-card empty">
+            <i class="pi pi-briefcase"></i>
+            <h3>No businesses on your account</h3>
+            <p class="section-muted mb-0">
+              A business is added when you first apply for a permit for it.
+            </p>
+          </div>
+        }
+      </div>
+    </p-tabpanel>
+
+    <!-- Properties -------------------------------------------------------- -->
+    <p-tabpanel value="2">
+      <div class="record-grid">
+        @for (property of portal.properties(); track property.id) {
+          <article class="asp-card record">
+            <header>
+              <span class="record__icon tint-green"><i class="pi pi-home"></i></span>
+              <p-tag
+                [value]="property.balance > 0 ? 'Balance due' : 'Settled'"
+                [severity]="property.balance > 0 ? 'warn' : 'success'"
+                styleClass="text-tiny"
+              />
+            </header>
+            <h3>{{ property.description }}</h3>
+            <p class="record__ref">{{ property.propertyNumber }}</p>
+            <dl class="record__meta">
+              <div><dt>Use</dt><dd>{{ property.use }}</dd></div>
+              <div><dt>Location</dt><dd>{{ property.location }}</dd></div>
+              <div><dt>Digital address</dt><dd>{{ property.digitalAddress }}</dd></div>
+              <div>
+                <dt>Rateable value</dt>
+                <dd>{{ property.rateableValue | currency: 'GHS ' : 'symbol' : '1.0-0' }}</dd>
+              </div>
+              <div>
+                <dt>2026 rate</dt>
+                <dd>{{ property.currentYearRate | currency: 'GHS ' : 'symbol' : '1.2-2' }}</dd>
+              </div>
+              <div>
+                <dt>Balance</dt>
+                <dd [class.due]="property.balance > 0">
+                  {{ property.balance | currency: 'GHS ' : 'symbol' : '1.2-2' }}
+                </dd>
+              </div>
+            </dl>
+          </article>
+        } @empty {
+          <div class="asp-card empty">
+            <i class="pi pi-home"></i>
+            <h3>No properties on your account</h3>
+            <p class="section-muted mb-0">Register a property to have it rated correctly.</p>
+          </div>
+        }
+      </div>
+    </p-tabpanel>
+
+    <!-- Security ---------------------------------------------------------- -->
+    <p-tabpanel value="3">
+      <section class="asp-card panel panel--narrow">
+        <h2>Change your password</h2>
+        <p class="section-muted">
+          Choose something you do not use anywhere else. Assembly staff will never ask you for it.
+        </p>
+
+        <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+          <div class="field">
+            <label for="current">Current password</label>
+            <p-password
+              inputId="current"
+              formControlName="current"
+              [feedback]="false"
+              [toggleMask]="true"
+              styleClass="w-full"
+              [inputStyle]="{ width: '100%' }"
+            />
+          </div>
+          <div class="field">
+            <label for="next">New password</label>
+            <p-password
+              inputId="next"
+              formControlName="next"
+              [toggleMask]="true"
+              styleClass="w-full"
+              [inputStyle]="{ width: '100%' }"
+            />
+          </div>
+          <div class="field">
+            <label for="confirm">Confirm new password</label>
+            <p-password
+              inputId="confirm"
+              formControlName="confirm"
+              [feedback]="false"
+              [toggleMask]="true"
+              styleClass="w-full"
+              [inputStyle]="{ width: '100%' }"
+            />
+          </div>
+
+          <p-button
+            type="submit"
+            label="Change password"
+            icon="pi pi-lock"
+            [loading]="savingPassword()"
+          />
+        </form>
+
+        <div class="security-note">
+          <i class="pi pi-shield"></i>
+          <div>
+            <strong>Keep your account safe</strong>
+            <p>
+              Never share your password or a one-time code. If you are asked for either, it is not
+              the Assembly asking.
+            </p>
+          </div>
+        </div>
+      </section>
+    </p-tabpanel>
+
+    <!-- Notifications ----------------------------------------------------- -->
+    <p-tabpanel value="4">
+      <section class="asp-card panel panel--narrow">
+        <h2>Notification preferences</h2>
+        <p class="section-muted">Choose how the Assembly reaches you about your applications.</p>
+
+        <ul class="pref-list">
+          <li>
+            <div>
+              <strong>Email</strong>
+              <small>Decisions, invoices and receipts sent to {{ user()?.email }}</small>
+            </div>
+            <p-toggleswitch
+              [ngModel]="ui.prefs().emailNotifications"
+              (ngModelChange)="toggleNotification('email', $event)"
+              [ngModelOptions]="{ standalone: true }"
+            />
+          </li>
+          <li>
+            <div>
+              <strong>SMS</strong>
+              <small>Short alerts to {{ user()?.phone }}</small>
+            </div>
+            <p-toggleswitch
+              [ngModel]="ui.prefs().smsNotifications"
+              (ngModelChange)="toggleNotification('sms', $event)"
+              [ngModelOptions]="{ standalone: true }"
+            />
+          </li>
+          <li>
+            <div>
+              <strong>Push notifications</strong>
+              <small>Alerts in your browser when the portal is open</small>
+            </div>
+            <p-toggleswitch
+              [ngModel]="ui.prefs().pushNotifications"
+              (ngModelChange)="toggleNotification('push', $event)"
+              [ngModelOptions]="{ standalone: true }"
+            />
+          </li>
+        </ul>
+
+        <p class="section-muted text-tiny mb-0">
+          Statutory notices — rate demands and inspection appointments — are always sent, whichever
+          preferences you set.
+        </p>
+      </section>
+    </p-tabpanel>
+  </p-tabpanels>
+</p-tabs>

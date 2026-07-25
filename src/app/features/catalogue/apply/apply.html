@@ -1,0 +1,462 @@
+@if (service(); as svc) {
+  <div class="page-header">
+    <div>
+      <h1>Apply — {{ svc.name }}</h1>
+      <p>{{ user()?.assembly }}</p>
+    </div>
+    <p-button
+      label="Cancel"
+      severity="secondary"
+      [text]="true"
+      icon="pi pi-times"
+      [routerLink]="['/app/services', svc.slug]"
+    />
+  </div>
+
+  <p-steps
+    [model]="stepItems()"
+    [activeIndex]="stepIndex()"
+    [readonly]="true"
+    styleClass="apply-steps"
+  />
+
+  <div class="apply-grid">
+    <div class="asp-card apply-panel">
+      <!-- 1. Applicant --------------------------------------------------- -->
+      @if (currentStep() === 'applicant') {
+        <h2>Applicant information</h2>
+        <p class="section-muted">
+          Taken from your profile. Correct anything that is out of date — it will be used on the
+          certificate.
+        </p>
+
+        <form [formGroup]="applicantForm" class="form-grid">
+          <div class="field field--full">
+            <label for="fullName">Full name <span class="req">*</span></label>
+            <input pInputText id="fullName" formControlName="fullName" />
+          </div>
+          <div class="field">
+            <label for="ghanaCard">Ghana Card number <span class="req">*</span></label>
+            <input pInputText id="ghanaCard" formControlName="ghanaCardNo" />
+          </div>
+          <div class="field">
+            <label for="phone">Phone number <span class="req">*</span></label>
+            <input pInputText id="phone" formControlName="phone" />
+          </div>
+          <div class="field">
+            <label for="email">Email address <span class="req">*</span></label>
+            <input pInputText id="email" type="email" formControlName="email" />
+          </div>
+          <div class="field">
+            <label for="digital">Digital address (GhanaPostGPS)</label>
+            <input pInputText id="digital" formControlName="digitalAddress" placeholder="GE-183-2401" />
+          </div>
+          <div class="field field--full">
+            <label for="address">Residential address <span class="req">*</span></label>
+            <input pInputText id="address" formControlName="address" />
+          </div>
+        </form>
+      }
+
+      <!-- 2. Business ------------------------------------------------------ -->
+      @if (currentStep() === 'business') {
+        <h2>Business information</h2>
+        <p class="section-muted">
+          Choose one of your registered businesses to fill this in, or enter a new one.
+        </p>
+
+        <div class="prefill">
+          @for (business of businesses(); track business.id) {
+            <button type="button" class="prefill__chip" (click)="useBusiness(business.id)">
+              <i class="pi pi-briefcase"></i>
+              <span>
+                <strong>{{ business.businessName }}</strong>
+                <small>{{ business.category }}</small>
+              </span>
+            </button>
+          }
+        </div>
+
+        <form [formGroup]="businessForm" class="form-grid">
+          <div class="field field--full">
+            <label for="businessName">Business name <span class="req">*</span></label>
+            <input pInputText id="businessName" formControlName="businessName" />
+          </div>
+          <div class="field">
+            <label for="category">Business category <span class="req">*</span></label>
+            <input pInputText id="category" formControlName="category" placeholder="e.g. Retail Shop" />
+          </div>
+          <div class="field">
+            <label for="registrationNo">Registration number</label>
+            <input pInputText id="registrationNo" formControlName="registrationNo" />
+          </div>
+          <div class="field">
+            <label for="tin">TIN</label>
+            <input pInputText id="tin" formControlName="tinNo" />
+          </div>
+          <div class="field">
+            <label for="employees">Number of employees</label>
+            <input pInputText id="employees" type="number" formControlName="employees" />
+          </div>
+          <div class="field">
+            <label for="bizLocation">Location of premises <span class="req">*</span></label>
+            <input pInputText id="bizLocation" formControlName="location" />
+          </div>
+          <div class="field">
+            <label for="bizDigital">Digital address</label>
+            <input pInputText id="bizDigital" formControlName="digitalAddress" />
+          </div>
+        </form>
+      }
+
+      <!-- 3. Property ------------------------------------------------------ -->
+      @if (currentStep() === 'property') {
+        <h2>Property information</h2>
+        <p class="section-muted">
+          Choose one of your registered properties, or describe a new one.
+        </p>
+
+        <div class="prefill">
+          @for (property of properties(); track property.id) {
+            <button type="button" class="prefill__chip" (click)="useProperty(property.id)">
+              <i class="pi pi-home"></i>
+              <span>
+                <strong>{{ property.description }}</strong>
+                <small>{{ property.location }}</small>
+              </span>
+            </button>
+          }
+        </div>
+
+        <form [formGroup]="propertyForm" class="form-grid">
+          <div class="field field--full">
+            <label for="description">Property description <span class="req">*</span></label>
+            <input pInputText id="description" formControlName="description" />
+          </div>
+          <div class="field">
+            <label for="use">Use <span class="req">*</span></label>
+            <p-select
+              inputId="use"
+              formControlName="use"
+              [options]="propertyUses"
+              styleClass="w-full"
+              appendTo="body"
+            />
+          </div>
+          <div class="field">
+            <label for="prpDigital">Digital address</label>
+            <input pInputText id="prpDigital" formControlName="digitalAddress" />
+          </div>
+          <div class="field field--full">
+            <label for="prpLocation">Location <span class="req">*</span></label>
+            <input pInputText id="prpLocation" formControlName="location" />
+          </div>
+        </form>
+      }
+
+      <!-- 4. Details ------------------------------------------------------- -->
+      @if (currentStep() === 'details') {
+        <h2>Application details</h2>
+        <p class="section-muted">
+          A short subject helps you find this application again, and helps the officer handling it.
+        </p>
+
+        <form [formGroup]="detailForm" class="form-grid">
+          <div class="field field--full">
+            <label for="subject">Subject <span class="req">*</span></label>
+            <input
+              pInputText
+              id="subject"
+              formControlName="subject"
+              placeholder="e.g. Akosua’s Kitchen — 2026 renewal"
+            />
+            @if (detailForm.controls.subject.touched && detailForm.controls.subject.invalid) {
+              <small class="field-error">Give this application a short subject.</small>
+            }
+          </div>
+          <div class="field">
+            <label for="preferred">Preferred start date</label>
+            <p-datepicker
+              inputId="preferred"
+              formControlName="preferredDate"
+              dateFormat="d MM yy"
+              [showIcon]="true"
+              appendTo="body"
+              styleClass="w-full"
+            />
+          </div>
+          <div class="field field--full">
+            <label for="notes">Anything else the Assembly should know?</label>
+            <textarea pTextarea id="notes" formControlName="notes" rows="4"></textarea>
+          </div>
+        </form>
+      }
+
+      <!-- 5. Documents ----------------------------------------------------- -->
+      @if (currentStep() === 'documents') {
+        <h2>Document upload</h2>
+        <p class="section-muted">
+          Attach each document below. Photographs taken with your phone are fine, as long as the
+          whole page is in frame and the text is readable.
+        </p>
+
+        <ul class="upload-list">
+          @for (doc of svc.documents; track doc) {
+            <li>
+              <div class="upload-list__info">
+                <i class="pi pi-file"></i>
+                <div>
+                  <strong>{{ doc }}</strong>
+                  @if (uploadFor(doc); as file) {
+                    <small class="attached">
+                      <i class="pi pi-check-circle"></i> {{ file.name }} · {{ file.size }}
+                    </small>
+                  } @else {
+                    <small>Not yet attached</small>
+                  }
+                </div>
+              </div>
+
+              @if (uploadFor(doc)) {
+                <p-button
+                  label="Remove"
+                  severity="danger"
+                  [text]="true"
+                  size="small"
+                  icon="pi pi-trash"
+                  (onClick)="removeUpload(doc)"
+                />
+              } @else {
+                <label class="upload-btn">
+                  <i class="pi pi-upload"></i> Choose file
+                  <input type="file" (change)="onFileChosen($event, doc)" hidden />
+                </label>
+              }
+            </li>
+          }
+        </ul>
+
+        <p class="hint-box">
+          <i class="pi pi-info-circle"></i>
+          Uploads are simulated in this demonstration build. Files are not sent anywhere and are not
+          stored.
+        </p>
+      }
+
+      <!-- 6. Review -------------------------------------------------------- -->
+      @if (currentStep() === 'review') {
+        <h2>Review your application</h2>
+        <p class="section-muted">Check everything below, then submit.</p>
+
+        <section class="review-block">
+          <h3>Applicant</h3>
+          <dl>
+            <div><dt>Name</dt><dd>{{ applicantForm.value.fullName }}</dd></div>
+            <div><dt>Ghana Card</dt><dd>{{ applicantForm.value.ghanaCardNo }}</dd></div>
+            <div><dt>Phone</dt><dd>{{ applicantForm.value.phone }}</dd></div>
+            <div><dt>Email</dt><dd>{{ applicantForm.value.email }}</dd></div>
+            <div><dt>Address</dt><dd>{{ applicantForm.value.address }}</dd></div>
+          </dl>
+        </section>
+
+        @if (svc.needsBusinessInfo) {
+          <section class="review-block">
+            <h3>Business</h3>
+            <dl>
+              <div><dt>Name</dt><dd>{{ businessForm.value.businessName }}</dd></div>
+              <div><dt>Category</dt><dd>{{ businessForm.value.category }}</dd></div>
+              <div><dt>Registration</dt><dd>{{ businessForm.value.registrationNo || '—' }}</dd></div>
+              <div><dt>TIN</dt><dd>{{ businessForm.value.tinNo || '—' }}</dd></div>
+              <div><dt>Location</dt><dd>{{ businessForm.value.location }}</dd></div>
+            </dl>
+          </section>
+        }
+
+        @if (svc.needsPropertyInfo) {
+          <section class="review-block">
+            <h3>Property</h3>
+            <dl>
+              <div><dt>Description</dt><dd>{{ propertyForm.value.description }}</dd></div>
+              <div><dt>Use</dt><dd>{{ propertyForm.value.use }}</dd></div>
+              <div><dt>Location</dt><dd>{{ propertyForm.value.location }}</dd></div>
+            </dl>
+          </section>
+        }
+
+        <section class="review-block">
+          <h3>Details</h3>
+          <dl>
+            <div><dt>Subject</dt><dd>{{ detailForm.value.subject }}</dd></div>
+            <div>
+              <dt>Preferred date</dt>
+              <dd>{{ detailForm.value.preferredDate ? (detailForm.value.preferredDate) : 'Not specified' }}</dd>
+            </div>
+            <div><dt>Notes</dt><dd>{{ detailForm.value.notes || '—' }}</dd></div>
+          </dl>
+        </section>
+
+        <section class="review-block">
+          <h3>Documents attached ({{ uploads().length }})</h3>
+          <ul class="review-docs">
+            @for (file of uploads(); track file.requirement) {
+              <li><i class="pi pi-file"></i> {{ file.name }} <small>· {{ file.size }}</small></li>
+            } @empty {
+              <li class="section-muted">No documents attached.</li>
+            }
+          </ul>
+        </section>
+
+        <section class="review-block review-block--fees">
+          <h3>Fees</h3>
+          <ul>
+            @for (fee of svc.fees; track fee.name) {
+              <li>
+                <span>{{ fee.name }}</span>
+                <strong>{{ fee.amount | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
+              </li>
+            }
+          </ul>
+          <div class="review-total">
+            <span>Total payable</span>
+            <strong>{{ totalFee() | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
+          </div>
+        </section>
+
+        <form [formGroup]="confirmForm" class="declaration">
+          <label>
+            <p-checkbox formControlName="declaration" [binary]="true" inputId="declaration" />
+            <span>
+              I declare that the information given is true and complete, and I understand that
+              providing false information may render any permit issued void.
+              <span class="req">*</span>
+            </span>
+          </label>
+          @if (confirmForm.controls.declaration.touched && confirmForm.controls.declaration.invalid) {
+            <small class="field-error">You must accept the declaration to submit.</small>
+          }
+        </form>
+      }
+
+      <!-- 7. Confirmation -------------------------------------------------- -->
+      @if (currentStep() === 'confirm') {
+        @if (submitted(); as application) {
+          <div class="confirmation">
+            <span class="confirmation__icon"><i class="pi pi-check"></i></span>
+            <h2>Application submitted</h2>
+            <p class="section-muted">
+              Your application has been received by {{ application.assembly }}. Keep the reference
+              below — you will need it in any correspondence.
+            </p>
+
+            <div class="confirmation__ref">
+              <span>Application number</span>
+              <strong>{{ application.applicationNumber }}</strong>
+            </div>
+
+            <dl class="confirmation__facts">
+              <div><dt>Service</dt><dd>{{ application.serviceName }}</dd></div>
+              <div><dt>Subject</dt><dd>{{ application.subject }}</dd></div>
+              <div><dt>Submitted</dt><dd>{{ application.submittedDate }}</dd></div>
+              <div>
+                <dt>Amount due</dt>
+                <dd>{{ application.amountDue | currency: 'GHS ' : 'symbol' : '1.2-2' }}</dd>
+              </div>
+            </dl>
+
+            <p class="hint-box">
+              <i class="pi pi-info-circle"></i>
+              Your invoice has been raised. The application moves to review once it is settled.
+            </p>
+
+            <div class="confirmation__actions">
+              <p-button label="Pay now" icon="pi pi-credit-card" size="large" (onClick)="payNow()" />
+              <p-button
+                label="View application"
+                severity="secondary"
+                [outlined]="true"
+                size="large"
+                [routerLink]="['/app/applications', application.id]"
+              />
+              <p-button
+                label="Back to dashboard"
+                severity="secondary"
+                [text]="true"
+                size="large"
+                routerLink="/app/dashboard"
+              />
+            </div>
+          </div>
+        }
+      }
+
+      <!-- Wizard controls -------------------------------------------------- -->
+      @if (currentStep() !== 'confirm') {
+        <footer class="apply-footer">
+          <p-button
+            label="Back"
+            icon="pi pi-arrow-left"
+            severity="secondary"
+            [outlined]="true"
+            [disabled]="stepIndex() === 0"
+            (onClick)="back()"
+          />
+
+          @if (isLastInput()) {
+            <p-button
+              label="Submit application"
+              icon="pi pi-send"
+              [loading]="submitting()"
+              (onClick)="submit()"
+            />
+          } @else {
+            <p-button label="Continue" icon="pi pi-arrow-right" iconPos="right" (onClick)="next()" />
+          }
+        </footer>
+      }
+    </div>
+
+    <!-- Sidebar ------------------------------------------------------------ -->
+    <aside class="apply-aside">
+      <section class="asp-card">
+        <h3>{{ svc.name }}</h3>
+        <p class="section-muted text-tiny">{{ svc.summary }}</p>
+        <dl class="aside-facts">
+          <div><dt>Processing</dt><dd>{{ svc.processingTime }}</dd></div>
+          <div><dt>Total fees</dt><dd>{{ totalFee() | currency: 'GHS ' : 'symbol' : '1.2-2' }}</dd></div>
+          <div>
+            <dt>Inspection</dt>
+            <dd>{{ svc.requiresInspection ? 'Required' : 'Not required' }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="asp-card">
+        <h3>Your progress</h3>
+        <ol class="progress-list">
+          @for (step of steps(); track step.key; let i = $index) {
+            <li
+              [class.is-done]="i < stepIndex()"
+              [class.is-current]="i === stepIndex()"
+              (click)="goTo(i)"
+            >
+              <span class="progress-list__marker">
+                @if (i < stepIndex()) {
+                  <i class="pi pi-check"></i>
+                } @else {
+                  {{ i + 1 }}
+                }
+              </span>
+              {{ step.label }}
+            </li>
+          }
+        </ol>
+      </section>
+    </aside>
+  </div>
+} @else {
+  <div class="asp-card" style="text-align: center; padding: 3rem">
+    <h2>Service not found</h2>
+    <p class="section-muted">That service is not in the catalogue.</p>
+    <p-button label="Back to services" routerLink="/app/services" />
+  </div>
+}

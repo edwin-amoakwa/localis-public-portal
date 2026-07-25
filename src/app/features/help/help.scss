@@ -1,0 +1,370 @@
+.help-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.help-main,
+.help-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.help-main h2,
+.help-aside h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+
+// --- FAQ ---------------------------------------------------------------------
+.search-wrap {
+  position: relative;
+  display: block;
+  margin-bottom: 1.25rem;
+
+  i {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--asp-ink-400);
+    pointer-events: none;
+  }
+
+  input {
+    width: 100%;
+    padding-left: 2.4rem;
+  }
+}
+
+.faq-group {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--asp-ink-400);
+  margin: 1.5rem 0 0.6rem;
+
+  &:first-of-type {
+    margin-top: 0;
+  }
+}
+
+// --- Forms -------------------------------------------------------------------
+.field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.1rem;
+
+  label {
+    font-size: 0.86rem;
+    font-weight: 650;
+    margin-bottom: 0.35rem;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+  }
+
+  .hint {
+    margin-top: 0.35rem;
+    font-size: 0.81rem;
+    color: var(--asp-ink-400);
+  }
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.field-error {
+  margin-top: 0.3rem;
+  font-size: 0.8rem;
+  color: #c0342c;
+}
+
+// --- Contact -----------------------------------------------------------------
+.contact-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--asp-line);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    strong {
+      display: block;
+      font-size: 0.88rem;
+    }
+
+    small,
+    a {
+      font-size: 0.86rem;
+    }
+
+    small {
+      color: var(--asp-ink-400);
+    }
+  }
+
+  &__icon {
+    width: 38px;
+    height: 38px;
+    flex: none;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-size: 0.95rem;
+  }
+}
+
+.assembly-box {
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: var(--asp-radius-sm);
+  background: var(--asp-blue-050);
+  border: 1px solid var(--asp-blue-100);
+
+  strong {
+    display: block;
+    font-size: 0.93rem;
+    color: var(--asp-blue-800);
+  }
+
+  small {
+    color: var(--asp-ink-500);
+    font-size: 0.82rem;
+  }
+}
+
+.safety {
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    position: relative;
+    padding-left: 1.6rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.87rem;
+    color: var(--asp-ink-500);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &::before {
+      content: '\e90a'; // pi-shield
+      font-family: 'primeicons';
+      position: absolute;
+      left: 0;
+      top: 1px;
+      color: var(--asp-green-600);
+      font-size: 0.85rem;
+    }
+  }
+}
+
+.empty {
+  text-align: center;
+  padding: 2rem 1rem;
+
+  i {
+    font-size: 2rem;
+    color: var(--asp-ink-400);
+    display: block;
+    margin-bottom: 0.6rem;
+  }
+}
+
+// --- Live chat ---------------------------------------------------------------
+.chat {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 5.5rem;
+  z-index: 55;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.6rem;
+
+  &__launcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.1rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--asp-green-600);
+    color: #fff;
+    font: inherit;
+    font-weight: 650;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: var(--asp-shadow);
+
+    &:hover {
+      background: var(--asp-green-700);
+    }
+  }
+
+  &__panel {
+    width: 330px;
+    max-width: calc(100vw - 3rem);
+    border-radius: var(--asp-radius);
+    background: var(--asp-card);
+    border: 1px solid var(--asp-line);
+    box-shadow: var(--asp-shadow-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1rem;
+    background: var(--asp-blue-700);
+    color: #fff;
+
+    strong {
+      display: block;
+      font-size: 0.92rem;
+    }
+
+    small {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.76rem;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    ::ng-deep .chat__avatar {
+      width: 34px;
+      height: 34px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+  }
+
+  &__close {
+    margin-left: auto;
+    width: 30px;
+    height: 30px;
+    border: 0;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    cursor: pointer;
+  }
+
+  &__body {
+    padding: 1rem;
+    max-height: 300px;
+    overflow-y: auto;
+    background: var(--asp-surface);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  &__line {
+    max-width: 85%;
+    align-self: flex-start;
+    padding: 0.6rem 0.8rem;
+    border-radius: 12px 12px 12px 3px;
+    background: var(--asp-card);
+    border: 1px solid var(--asp-line);
+
+    p {
+      margin: 0;
+      font-size: 0.85rem;
+      line-height: 1.45;
+    }
+
+    time {
+      display: block;
+      margin-top: 0.25rem;
+      font-size: 0.7rem;
+      color: var(--asp-ink-400);
+    }
+
+    &--mine {
+      align-self: flex-end;
+      border-radius: 12px 12px 3px 12px;
+      background: var(--asp-blue-700);
+      border-color: var(--asp-blue-700);
+      color: #fff;
+
+      time {
+        color: rgba(255, 255, 255, 0.65);
+      }
+    }
+  }
+
+  &__foot {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-top: 1px solid var(--asp-line);
+
+    input {
+      flex: 1;
+    }
+  }
+
+  &__note {
+    margin: 0;
+    padding: 0.5rem 0.75rem;
+    text-align: center;
+    font-size: 0.73rem;
+    color: var(--asp-ink-400);
+    background: var(--asp-gold-100);
+    color: var(--asp-gold-700);
+  }
+}
+
+.online-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+  display: inline-block;
+}
+
+// --- Responsive --------------------------------------------------------------
+@media (max-width: 1080px) {
+  .help-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .chat {
+    right: 1rem;
+    bottom: 5rem;
+  }
+}

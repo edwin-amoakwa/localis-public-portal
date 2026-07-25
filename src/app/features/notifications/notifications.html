@@ -1,0 +1,94 @@
+<div class="page-header">
+  <div>
+    <h1>Notifications</h1>
+    <p>
+      @if (unreadCount() > 0) {
+        You have {{ unreadCount() }} unread notification(s).
+      } @else {
+        You are up to date.
+      }
+    </p>
+  </div>
+  @if (unreadCount() > 0) {
+    <p-button
+      label="Mark all as read"
+      icon="pi pi-check"
+      severity="secondary"
+      [outlined]="true"
+      (onClick)="markAllRead()"
+    />
+  }
+</div>
+
+<div class="filter-row">
+  <button type="button" class="chip" [class.is-active]="filter() === 'all'" (click)="setFilter('all')">
+    All notifications
+  </button>
+  <button
+    type="button"
+    class="chip"
+    [class.is-active]="filter() === 'unread'"
+    (click)="setFilter('unread')"
+  >
+    Unread
+    @if (unreadCount() > 0) {
+      <span class="chip__count">{{ unreadCount() }}</span>
+    }
+  </button>
+</div>
+
+<section class="asp-card notif-panel">
+  @if (notifications().length === 0) {
+    <div class="empty">
+      <i class="pi pi-inbox"></i>
+      <h3>Nothing to show</h3>
+      <p class="section-muted mb-0">
+        @if (filter() === 'unread') {
+          You have read everything.
+        } @else {
+          You have no notifications yet.
+        }
+      </p>
+    </div>
+  } @else {
+    <p-timeline [value]="notifications()" align="left" styleClass="notif-timeline">
+      <ng-template pTemplate="marker" let-notice>
+        <span class="notif-marker" [class]="kindTint(notice.kind)">
+          <i [class]="kindIcon(notice.kind)"></i>
+        </span>
+      </ng-template>
+
+      <ng-template pTemplate="content" let-notice>
+        <article class="notif" [class.is-unread]="!notice.read">
+          <header>
+            <div class="notif__title">
+              <strong>{{ notice.title }}</strong>
+              @if (!notice.read) {
+                <span class="notif__dot" aria-label="Unread"></span>
+              }
+            </div>
+            <p-tag [value]="kindLabel(notice.kind)" severity="secondary" styleClass="text-tiny" />
+          </header>
+
+          <p>{{ notice.body }}</p>
+
+          <footer>
+            <time>{{ notice.date }}</time>
+            <span class="notif__actions">
+              @if (notice.link) {
+                <a [routerLink]="notice.link" (click)="markRead(notice)">
+                  View <i class="pi pi-angle-right"></i>
+                </a>
+              }
+              @if (!notice.read) {
+                <button type="button" class="link-btn" (click)="markRead(notice)">
+                  Mark as read
+                </button>
+              }
+            </span>
+          </footer>
+        </article>
+      </ng-template>
+    </p-timeline>
+  }
+</section>

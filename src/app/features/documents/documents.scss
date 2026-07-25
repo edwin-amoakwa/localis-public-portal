@@ -1,0 +1,179 @@
+.expiry-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  border-left: 4px solid var(--asp-gold-600);
+  background: var(--asp-gold-100);
+  border-color: var(--asp-gold-600);
+
+  &__icon {
+    width: 42px;
+    height: 42px;
+    flex: none;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.6);
+    color: var(--asp-gold-700);
+    font-size: 1.15rem;
+  }
+
+  strong,
+  p {
+    color: var(--asp-gold-700);
+  }
+
+  p {
+    margin: 0.15rem 0 0;
+    font-size: 0.88rem;
+  }
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.search-wrap {
+  flex: 1 1 300px;
+  position: relative;
+  display: block;
+
+  i {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--asp-ink-400);
+    pointer-events: none;
+  }
+
+  input {
+    width: 100%;
+    padding-left: 2.4rem;
+  }
+}
+
+::ng-deep .kind-filter {
+  min-width: 210px;
+}
+
+.doc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.doc-card {
+  display: flex;
+  flex-direction: column;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--asp-shadow);
+  }
+
+  header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.9rem;
+  }
+
+  &__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 1.1rem;
+  }
+
+  h3 {
+    font-size: 0.98rem;
+    margin-bottom: 0.25rem;
+    line-height: 1.35;
+  }
+
+  &__ref {
+    font-size: 0.8rem;
+    color: var(--asp-ink-400);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 0.9rem;
+  }
+
+  &__meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin: 0 0 1rem;
+    flex: 1;
+
+    dt {
+      font-size: 0.71rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--asp-ink-400);
+      margin-bottom: 0.1rem;
+    }
+
+    dd {
+      margin: 0;
+      font-size: 0.86rem;
+      font-weight: 650;
+    }
+  }
+
+  footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: auto;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--asp-line);
+  }
+
+  &__size {
+    font-size: 0.79rem;
+    color: var(--asp-ink-400);
+  }
+}
+
+.empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem 1.5rem;
+
+  i {
+    font-size: 2.2rem;
+    color: var(--asp-ink-400);
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .doc-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .doc-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .expiry-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

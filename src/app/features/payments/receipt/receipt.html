@@ -1,0 +1,110 @@
+@if (receipt(); as rct) {
+  <div class="no-print">
+    <p-breadcrumb [model]="crumbs()" [home]="home" styleClass="mb-3" />
+
+    <div class="page-header">
+      <div>
+        <h1>Payment receipt</h1>
+        <p>Keep this for your records. It is proof that the Assembly received your payment.</p>
+      </div>
+      <div class="flex gap-2">
+        <p-button label="Print" icon="pi pi-print" (onClick)="print()" />
+        <p-button
+          label="Back to payments"
+          severity="secondary"
+          [outlined]="true"
+          routerLink="/app/payments"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Receipt document ----------------------------------------------------- -->
+  <article class="receipt">
+    <header class="receipt__head">
+      <div class="receipt__brand">
+        <svg viewBox="0 0 64 64" width="46" height="46" aria-hidden="true">
+          <rect width="64" height="64" rx="15" fill="#0F4C81" />
+          <path d="M32 12 51 22H13z" fill="#fff" />
+          <rect x="17" y="26" width="5" height="18" rx="1" fill="#fff" />
+          <rect x="26" y="26" width="5" height="18" rx="1" fill="#fff" />
+          <rect x="35" y="26" width="5" height="18" rx="1" fill="#fff" />
+          <rect x="44" y="26" width="5" height="18" rx="1" fill="#fff" />
+          <rect x="12" y="47" width="40" height="5" rx="2" fill="#0E9F6E" />
+        </svg>
+        <div>
+          <strong>{{ rct.assembly }}</strong>
+          <small>Assembly Services Portal &middot; Republic of Ghana</small>
+        </div>
+      </div>
+
+      <div class="receipt__stamp">
+        <span>Paid</span>
+        <i class="pi pi-check"></i>
+      </div>
+    </header>
+
+    <div class="receipt__title">
+      <h2>Official payment receipt</h2>
+      <p class="receipt__number">{{ rct.receiptNumber }}</p>
+    </div>
+
+    <dl class="receipt__grid">
+      <div>
+        <dt>Date paid</dt>
+        <dd>{{ rct.paidDate | date: 'd MMMM y' }}</dd>
+      </div>
+      <div>
+        <dt>Payment method</dt>
+        <dd>{{ methodLabel(rct.method) }}</dd>
+      </div>
+      <div>
+        <dt>Transaction reference</dt>
+        <dd class="mono">{{ rct.reference }}</dd>
+      </div>
+      <div>
+        <dt>Invoice settled</dt>
+        <dd class="mono">{{ rct.invoiceNumber }}</dd>
+      </div>
+      <div>
+        <dt>Received from</dt>
+        <dd>{{ rct.payer }}</dd>
+      </div>
+      <div>
+        <dt>Issuing Assembly</dt>
+        <dd>{{ rct.assembly }}</dd>
+      </div>
+    </dl>
+
+    <div class="receipt__what">
+      <span>In respect of</span>
+      <strong>{{ rct.description }}</strong>
+    </div>
+
+    <div class="receipt__amount">
+      <span>Amount received</span>
+      <strong>{{ rct.amount | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
+    </div>
+
+    <footer class="receipt__foot">
+      <div class="receipt__qr" aria-hidden="true"></div>
+      <div class="receipt__note">
+        <p>
+          This receipt was issued electronically by {{ rct.assembly }} through the Assembly Services
+          Portal. Its authenticity can be confirmed against the Assembly&rsquo;s register using the
+          receipt number above.
+        </p>
+        <p class="receipt__demo">
+          <strong>Demonstration build.</strong> This is sample data and is not a valid receipt.
+        </p>
+      </div>
+    </footer>
+  </article>
+} @else {
+  <div class="asp-card empty">
+    <i class="pi pi-exclamation-triangle"></i>
+    <h2>Receipt not found</h2>
+    <p class="section-muted">That receipt is not on your account.</p>
+    <p-button label="Back to payments" routerLink="/app/payments" />
+  </div>
+}
