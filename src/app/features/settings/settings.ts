@@ -3,7 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
+import { ToastService } from '../../core/services/toast.service';
 import { AuthService } from '../../core/services/auth.service';
 import { UiService } from '../../core/services/ui.service';
 import { environment } from '../../../environments/environment';
@@ -18,7 +19,7 @@ import { environment } from '../../../environments/environment';
 export class SettingsPage {
   protected readonly ui = inject(UiService);
   private readonly auth = inject(AuthService);
-  private readonly messages = inject(MessageService);
+  private readonly toast = inject(ToastService);
   private readonly confirm = inject(ConfirmationService);
 
   protected readonly env = environment;
@@ -36,15 +37,14 @@ export class SettingsPage {
 
     // Only English content exists in this build — better to say so than to
     // leave someone waiting for a translation that never arrives.
-    this.messages.add({
-      severity: value === 'en' ? 'success' : 'info',
-      summary: value === 'en' ? 'Language set to English' : 'Translation not yet available',
-      detail:
-        value === 'en'
-          ? 'The portal will display in English.'
-          : 'Your preference has been saved. Translated content is still being prepared.',
-      life: 4000,
-    });
+    if (value === 'en') {
+      this.toast.success('Language set to English', 'The portal will display in English.');
+    } else {
+      this.toast.info(
+        'Translation not yet available',
+        'Your preference has been saved. Translated content is still being prepared.',
+      );
+    }
   }
 
   protected setTheme(dark: boolean): void {
@@ -81,12 +81,7 @@ export class SettingsPage {
           pushNotifications: false,
         });
 
-        this.messages.add({
-          severity: 'success',
-          summary: 'Settings reset',
-          detail: 'Everything is back to its default.',
-          life: 3000,
-        });
+        this.toast.success('Settings reset', 'Everything is back to its default.');
       },
     });
   }

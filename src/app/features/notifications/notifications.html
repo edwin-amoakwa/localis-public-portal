@@ -51,14 +51,14 @@
       </p>
     </div>
   } @else {
-    <p-timeline [value]="notifications()" align="left" styleClass="notif-timeline">
-      <ng-template pTemplate="marker" let-notice>
+    <p-timeline [value]="notifications()" align="left" class="notif-timeline">
+      <ng-template #marker let-notice>
         <span class="notif-marker" [class]="kindTint(notice.kind)">
           <i [class]="kindIcon(notice.kind)"></i>
         </span>
       </ng-template>
 
-      <ng-template pTemplate="content" let-notice>
+      <ng-template #content let-notice>
         <article class="notif" [class.is-unread]="!notice.read">
           <header>
             <div class="notif__title">
@@ -67,7 +67,7 @@
                 <span class="notif__dot" aria-label="Unread"></span>
               }
             </div>
-            <p-tag [value]="kindLabel(notice.kind)" severity="secondary" styleClass="text-tiny" />
+            <p-tag [value]="kindLabel(notice.kind)" severity="secondary" class="text-tiny" />
           </header>
 
           <p>{{ notice.body }}</p>

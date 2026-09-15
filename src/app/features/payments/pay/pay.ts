@@ -7,9 +7,10 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
-import { MenuItem, MessageService } from 'primeng/api';
+import { MenuItem } from 'primeng/api';
 import { PortalService } from '../../../core/services/portal.service';
 import { PaymentMethod } from '../../../core/models';
+import { ToastService } from '../../../core/services/toast.service';
 
 interface MethodOption {
   value: PaymentMethod;
@@ -43,7 +44,7 @@ export class PayPage {
   private readonly fb = inject(FormBuilder);
   private readonly portal = inject(PortalService);
   private readonly router = inject(Router);
-  private readonly messages = inject(MessageService);
+  private readonly toast = inject(ToastService);
 
   readonly id = input.required<string>();
 
@@ -121,22 +122,12 @@ export class PayPage {
     const amount = this.form.controls.amount.value;
 
     if (!amount || amount <= 0) {
-      this.messages.add({
-        severity: 'warn',
-        summary: 'Enter an amount',
-        detail: 'The amount must be greater than zero.',
-        life: 3500,
-      });
+      this.toast.warn('Enter an amount', 'The amount must be greater than zero.');
       return;
     }
 
     if (amount > this.balance()) {
-      this.messages.add({
-        severity: 'warn',
-        summary: 'Amount too high',
-        detail: 'You cannot pay more than the outstanding balance.',
-        life: 3500,
-      });
+      this.toast.warn('Amount too high', 'You cannot pay more than the outstanding balance.');
       return;
     }
 
@@ -153,12 +144,7 @@ export class PayPage {
 
       this.processing.set(false);
 
-      this.messages.add({
-        severity: 'success',
-        summary: 'Payment successful',
-        detail: `Receipt ${receipt.receiptNumber} has been issued.`,
-        life: 5000,
-      });
+      this.toast.success('Payment successful', `Receipt ${receipt.receiptNumber} has been issued.`);
 
       this.router.navigate(['/app/payments/receipt', receipt.id]);
     }, 1400);

@@ -84,19 +84,6 @@
 
       <div class="field-row">
         <div class="field">
-          <label for="reg-email">Email address <span class="req" aria-hidden="true">*</span></label>
-          <input
-            pInputText
-            id="reg-email"
-            type="email"
-            formControlName="email"
-            autocomplete="email"
-          />
-          @if (invalid('email')) {
-            <small class="field-error">Enter a valid email address.</small>
-          }
-        </div>
-        <div class="field">
           <label for="phone">Phone number <span class="req" aria-hidden="true">*</span></label>
           <input
             pInputText
@@ -105,8 +92,23 @@
             autocomplete="tel"
             placeholder="+233 24 000 0000"
           />
+          <small class="hint">We'll send a confirmation SMS to this number.</small>
           @if (invalid('phone')) {
             <small class="field-error">Enter a valid phone number.</small>
+          }
+        </div>
+        <div class="field">
+          <label for="reg-email">Email address <span class="optional">(optional)</span></label>
+          <input
+            pInputText
+            id="reg-email"
+            type="email"
+            formControlName="email"
+            autocomplete="email"
+          />
+          <small class="hint">You can also sign in with it.</small>
+          @if (invalid('email')) {
+            <small class="field-error">Enter a valid email address.</small>
           }
         </div>
       </div>
@@ -134,7 +136,7 @@
             formControlName="region"
             [options]="regions"
             placeholder="Select your region"
-            styleClass="w-full"
+            class="w-full"
             appendTo="body"
           />
           @if (invalid('region')) {
@@ -148,7 +150,7 @@
             formControlName="assembly"
             [options]="assemblies()"
             placeholder="Select your Assembly"
-            styleClass="w-full"
+            class="w-full"
             appendTo="body"
             [emptyMessage]="'Choose a region first'"
           />
@@ -166,7 +168,7 @@
             inputId="reg-password"
             formControlName="password"
             [toggleMask]="true"
-            styleClass="w-full"
+            class="w-full"
             [inputStyle]="{ width: '100%' }"
           />
           <small class="hint">At least 8 characters.</small>
@@ -181,7 +183,7 @@
             formControlName="confirmPassword"
             [feedback]="false"
             [toggleMask]="true"
-            styleClass="w-full"
+            class="w-full"
             [inputStyle]="{ width: '100%' }"
           />
           @if (form.errors?.['passwordMismatch'] && form.controls.confirmPassword.touched) {
@@ -217,8 +219,8 @@
 
       <p class="auth__demo">
         <i class="pi pi-info-circle"></i>
-        <strong>Demonstration build.</strong> Nothing is sent anywhere — registering takes you
-        straight into the portal with sample data.
+        <strong>Pilot build.</strong> Your account is created on the Assembly server. The rest of
+        the portal still shows sample data while it is being connected.
       </p>
     </form>
   </div>

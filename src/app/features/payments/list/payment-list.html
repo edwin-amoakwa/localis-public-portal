@@ -106,8 +106,8 @@
     <!-- Paid -------------------------------------------------------------- -->
     <p-tabpanel value="1">
       <div class="asp-card asp-card--flush">
-        <p-table [value]="paid()" styleClass="p-datatable-sm" responsiveLayout="scroll">
-          <ng-template pTemplate="header">
+        <p-table [value]="paid()" size="small" responsiveLayout="scroll">
+          <ng-template #header>
             <tr>
               <th>Invoice</th>
               <th>Description</th>
@@ -116,7 +116,7 @@
               <th class="text-right">Amount</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-invoice>
+          <ng-template #body let-invoice>
             <tr>
               <td class="mono">{{ invoice.invoiceNumber }}</td>
               <td>
@@ -137,7 +137,7 @@
               </td>
             </tr>
           </ng-template>
-          <ng-template pTemplate="emptymessage">
+          <ng-template #emptymessage>
             <tr>
               <td colspan="5" class="text-center section-muted">No settled invoices yet.</td>
             </tr>
@@ -149,8 +149,8 @@
     <!-- Receipts ---------------------------------------------------------- -->
     <p-tabpanel value="2">
       <div class="asp-card asp-card--flush">
-        <p-table [value]="receipts()" styleClass="p-datatable-sm" responsiveLayout="scroll">
-          <ng-template pTemplate="header">
+        <p-table [value]="receipts()" size="small" responsiveLayout="scroll">
+          <ng-template #header>
             <tr>
               <th>Receipt</th>
               <th>Description</th>
@@ -160,7 +160,7 @@
               <th></th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-receipt>
+          <ng-template #body let-receipt>
             <tr>
               <td class="mono">{{ receipt.receiptNumber }}</td>
               <td>
@@ -190,7 +190,7 @@
               </td>
             </tr>
           </ng-template>
-          <ng-template pTemplate="emptymessage">
+          <ng-template #emptymessage>
             <tr>
               <td colspan="6" class="text-center section-muted">No receipts yet.</td>
             </tr>

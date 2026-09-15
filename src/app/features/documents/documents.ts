@@ -5,10 +5,10 @@ import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
-import { MessageService } from 'primeng/api';
 import { PortalService } from '../../core/services/portal.service';
 import { Severity } from '../../core/services/ui.service';
 import { DocumentKind, StoredDocument } from '../../core/models';
+import { ToastService } from '../../core/services/toast.service';
 
 /** Permits, certificates, receipts, letters and notices held on the account. */
 @Component({
@@ -19,7 +19,7 @@ import { DocumentKind, StoredDocument } from '../../core/models';
 })
 export class DocumentsPage {
   private readonly portal = inject(PortalService);
-  private readonly messages = inject(MessageService);
+  private readonly toast = inject(ToastService);
 
   protected readonly term = signal('');
   protected readonly kind = signal<DocumentKind | null>(null);
@@ -87,12 +87,7 @@ export class DocumentsPage {
 
   protected download(document: StoredDocument): void {
     // No file exists behind these entries — say so rather than doing nothing.
-    this.messages.add({
-      severity: 'info',
-      summary: 'Demonstration build',
-      detail: `“${document.name}” is sample data. In the live portal this downloads a PDF.`,
-      life: 4000,
-    });
+    this.toast.info('Demonstration build', `“${document.name}” is sample data. In the live portal this downloads a PDF.`);
   }
 
   protected clear(): void {

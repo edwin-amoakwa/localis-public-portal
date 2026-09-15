@@ -27,6 +27,16 @@ export interface UserProfile {
   memberSince: string;
 }
 
+/** What a business mainly deals in — Section 1.5 of the KYC form. */
+export type NatureOfBusiness = 'PRODUCTS' | 'SERVICES' | 'BOTH' | 'OTHER';
+
+/**
+ * A registered business, stored once and reused across every application
+ * filed against it — including renewals, which reuse the same record rather
+ * than asking the applicant to retype it. Modelled on Section A of the STMA
+ * 2022 Business Operating Permit (KYC) form; the per-contact fields in
+ * Sections B and C are deliberately left out for now.
+ */
 export interface BusinessProfile {
   id: string;
   businessName: string;
@@ -35,8 +45,16 @@ export interface BusinessProfile {
   ownershipType: string;
   registrationNo: string;
   tinNo: string;
+  natureOfBusiness: NatureOfBusiness;
+  coreBusinessDescription?: string;
+  yearsInOperation: number;
+  monthsInOperation: number;
+  /** Other regions the business also has a presence in, besides its home assembly. */
+  regionalPresence: string[];
   location: string;
+  postalAddress?: string;
   digitalAddress: string;
+  website?: string;
   employees: number;
   assembly: string;
   status: 'ACTIVE' | 'INACTIVE';
@@ -104,6 +122,8 @@ export interface AssemblyService {
   needsPropertyInfo: boolean;
   requiresInspection: boolean;
   popular?: boolean;
+  /** A renewal carries the business forward — it must be picked, not retyped. */
+  isRenewal?: boolean;
 }
 
 // --- Applications -----------------------------------------------------------
@@ -148,6 +168,8 @@ export interface Application {
   amountPaid: number;
   subject: string;
   invoiceId?: string;
+  /** The stored business this application was filed against, if any. */
+  businessId?: string;
   inspection?: Inspection;
   documents: ApplicationDocumentRef[];
   timeline: ApplicationEvent[];

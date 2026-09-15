@@ -6,10 +6,11 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { CheckboxModule } from 'primeng/checkbox';
 import { SelectModule } from 'primeng/select';
-import { MessageService } from 'primeng/api';
-import { AuthService } from '../../../core/services/auth.service';
-import { PortalService } from '../../../core/services/portal.service';
-import { AccountType } from '../../../core/models';
+import { AuthService } from '../../core/services/auth.service';
+import { PortalService } from '../../core/services/portal.service';
+import { AccountType } from '../../core/models';
+import { PHONE_PATTERN } from '../../core/utils/identifier';
+import { ToastService } from '../../core/services/toast.service';
 
 interface AccountTypeOption {
   value: AccountType;
@@ -19,8 +20,10 @@ interface AccountTypeOption {
 }
 
 /**
- * Mock registration. Details are captured and kept for the session, then the
- * new user is taken straight into the dashboard.
+ * Registration, live against localis-api: the account is created on the
+ * server, which texts the welcome SMS. Region, assembly and account type stay
+ * portal-side for now — the server's Applicant is deliberately not tied to an
+ * assembly.
  */
 @Component({
   selector: 'app-register',
@@ -41,7 +44,7 @@ export class RegisterPage {
   private readonly auth = inject(AuthService);
   private readonly portal = inject(PortalService);
   private readonly router = inject(Router);
-  private readonly messages = inject(MessageService);
+  private readonly toast = inject(ToastService);
 
   protected readonly submitting = signal(false);
   protected readonly accountType = signal<AccountType>('BUSINESS_OWNER');
@@ -79,8 +82,8 @@ export class RegisterPage {
     {
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.required, Validators.pattern(/^[0-9+\s()-]{9,}$/)]],
+      email: ['', [Validators.email]],
+      phone: ['', [Validators.required, Validators.pattern(PHONE_PATTERN)]],
       ghanaCardNo: [
         '',
         [Validators.required, Validators.pattern(/^GHA-\d{9}-\d$/i)],
@@ -126,41 +129,35 @@ export class RegisterPage {
   protected submit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      this.messages.add({
-        severity: 'warn',
-        summary: 'Check your details',
-        detail: 'Some required information is missing or not in the expected format.',
-        life: 4000,
-      });
+      this.toast.warn('Check your details', 'Some required information is missing or not in the expected format.');
       return;
     }
 
     this.submitting.set(true);
     const value = this.form.getRawValue();
 
-    setTimeout(() => {
-      this.auth.register({
+    this.auth
+      .register({
         firstName: value.firstName,
         lastName: value.lastName,
         email: value.email,
         phone: value.phone,
         ghanaCardNo: value.ghanaCardNo.toUpperCase(),
+        password: value.password,
+        confirmPassword: value.confirmPassword,
         region: value.region,
         assembly: value.assembly,
         accountType: this.accountType(),
-      });
-
-      this.submitting.set(false);
-
-      this.messages.add({
-        severity: 'success',
-        summary: 'Account created',
-        detail: `Welcome, ${value.firstName}. Your account is ready.`,
-        life: 4000,
-      });
-
-      this.router.navigate(['/app/dashboard']);
-    }, 700);
+      })
+      .then((user) => {
+        this.portal.sendRegistrationConfirmation(user);
+        this.toast.success('Account created', `Welcome, ${user.firstName}. We've sent a confirmation SMS to ${user.phone}.`);
+        this.router.navigate(['/app/dashboard']);
+      })
+      .catch((error) => {
+        this.toast.error('Registration failed', error);
+      })
+      .finally(() => this.submitting.set(false));
   }
 
   protected invalid(control: keyof typeof this.form.controls): boolean {

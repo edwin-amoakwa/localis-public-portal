@@ -1,0 +1,46 @@
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--asp-blue-700);
+}
+
+.cat-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+
+  h1 {
+    margin: 0;
+    font-size: 1.6rem;
+    line-height: 1.2;
+  }
+
+  p {
+    margin: 0.2rem 0 0;
+    color: var(--asp-ink-500);
+  }
+}
+
+.not-found {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .cat-head {
+    align-items: flex-start;
+
+    h1 {
+      font-size: 1.3rem;
+    }
+
+    p {
+      font-size: 0.9rem;
+    }
+  }
+}

@@ -1,9 +1,9 @@
 <div class="page-header">
   <div>
     <h1>My applications</h1>
-    <p>Everything you have filed, and where each one has reached.</p>
+    <p>Your Business Operating Permit applications, and where each one has reached.</p>
   </div>
-  <p-button label="New application" icon="pi pi-plus" routerLink="/app/services" />
+  <p-button label="New application" icon="pi pi-plus" routerLink="/app/services/business-operating-permit" />
 </div>
 
 <section class="summary-strip">
@@ -12,16 +12,16 @@
     <span class="stat-tile__label">Total applications</span>
   </div>
   <div class="asp-card summary-strip__item">
-    <span class="stat-tile__value">{{ counts().pending }}</span>
-    <span class="stat-tile__label">In progress</span>
+    <span class="stat-tile__value">{{ counts().inProgress }}</span>
+    <span class="stat-tile__label">With the Assembly</span>
+  </div>
+  <div class="asp-card summary-strip__item" [class.summary-strip__item--alert]="counts().toPay > 0">
+    <span class="stat-tile__value">{{ counts().toPay }}</span>
+    <span class="stat-tile__label">Ready to pay</span>
   </div>
   <div class="asp-card summary-strip__item">
-    <span class="stat-tile__value">{{ counts().approved }}</span>
-    <span class="stat-tile__label">Approved or completed</span>
-  </div>
-  <div class="asp-card summary-strip__item">
-    <span class="stat-tile__value">{{ counts().draft }}</span>
-    <span class="stat-tile__label">Drafts</span>
+    <span class="stat-tile__value">{{ counts().issued }}</span>
+    <span class="stat-tile__label">Permits generated</span>
   </div>
 </section>
 
@@ -34,90 +34,103 @@
         type="search"
         [ngModel]="term()"
         (ngModelChange)="term.set($event)"
-        placeholder="Search by number, service, subject or officer"
+        placeholder="Search by number, business, category or Assembly"
         aria-label="Search applications"
       />
     </span>
 
     <p-select
-      [options]="statusOptions"
+      [options]="statusOptions()"
       optionLabel="label"
       optionValue="value"
       [ngModel]="status()"
       (ngModelChange)="status.set($event)"
       placeholder="All statuses"
       [showClear]="true"
-      styleClass="status-filter"
+      class="status-filter"
       appendTo="body"
     />
 
     @if (term() || status()) {
       <p-button label="Clear" severity="secondary" [text]="true" (onClick)="clear()" />
     }
+    <p-button icon="pi pi-refresh" severity="secondary" [text]="true" ariaLabel="Refresh" [loading]="loading()" (onClick)="load()" />
   </header>
 
   <p-table
     [value]="rows()"
+    [loading]="loading()"
     [paginator]="rows().length > 10"
     [rows]="10"
     styleClass="p-datatable-sm"
-    responsiveLayout="scroll"
     [rowsPerPageOptions]="[10, 25, 50]"
   >
-    <ng-template pTemplate="header">
+    <ng-template #header>
       <tr>
         <th>Application number</th>
-        <th>Service</th>
+        <th>Business</th>
+        <th>Assembly</th>
         <th>Submitted</th>
         <th>Status</th>
-        <th>Officer</th>
         <th class="text-right">Amount</th>
         <th></th>
       </tr>
     </ng-template>
 
-    <ng-template pTemplate="body" let-app>
+    <ng-template #body let-app>
       <tr>
         <td>
           <a [routerLink]="['/app/applications', app.id]" class="mono">{{ app.applicationNumber }}</a>
-          <small class="cell-sub">{{ app.subject }}</small>
+          <small class="cell-sub">{{ app.applicationTypeLabel }} · {{ app.permitYear }}</small>
         </td>
-        <td>{{ app.serviceName }}</td>
+        <td>
+          {{ app.business.businessName }}
+          <small class="cell-sub">{{ app.business.categoryName }}</small>
+        </td>
+        <td>{{ app.assembly.assemblyName }}</td>
         <td>{{ app.submittedDate | date: 'd MMM y' }}</td>
         <td>
-          <p-tag [value]="statusLabel(app.status)" [severity]="statusSeverity(app.status)" />
+          <p-tag [value]="app.statusLabel" [severity]="severity(app.status)" />
         </td>
-        <td>{{ app.officer }}</td>
         <td class="text-right">
-          <strong>{{ app.amountDue | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
-          @if (app.amountDue > app.amountPaid) {
-            <small class="cell-sub cell-sub--due">
-              {{ app.amountDue - app.amountPaid | currency: 'GHS ' : 'symbol' : '1.2-2' }} due
-            </small>
+          @if (app.assessedAmount > 0) {
+            <strong>{{ app.assessedAmount | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
+            @if (app.outstandingAmount > 0) {
+              <small class="cell-sub cell-sub--due">
+                {{ app.outstandingAmount | currency: 'GHS ' : 'symbol' : '1.2-2' }} due
+              </small>
+            }
+          } @else {
+            <small class="cell-sub">Not yet assessed</small>
           }
         </td>
         <td class="text-right">
-          <p-button
-            label="Open"
-            severity="secondary"
-            [text]="true"
-            size="small"
-            icon="pi pi-angle-right"
-            iconPos="right"
-            [routerLink]="['/app/applications', app.id]"
-          />
+          @if (app.status === 'AWAITING_PAYMENT') {
+            <p-button label="Pay" icon="pi pi-mobile" size="small" [routerLink]="['/app/applications', app.id]" />
+          } @else if (app.status === 'ISSUED') {
+            <p-button label="Permit" icon="pi pi-file-pdf" severity="success" [outlined]="true" size="small"
+              [routerLink]="['/app/applications', app.id]" />
+          } @else {
+            <p-button label="Open" severity="secondary" [text]="true" size="small" icon="pi pi-angle-right"
+              iconPos="right" [routerLink]="['/app/applications', app.id]" />
+          }
         </td>
       </tr>
     </ng-template>
 
-    <ng-template pTemplate="emptymessage">
+    <ng-template #emptymessage>
       <tr>
         <td colspan="7">
           <div class="empty">
             <i class="pi pi-inbox"></i>
-            <h3>No applications match your filter</h3>
-            <p class="section-muted">Try a different search, or start a new application.</p>
-            <p-button label="Browse services" routerLink="/app/services" />
+            @if (applications().length === 0) {
+              <h3>No applications yet</h3>
+              <p class="section-muted">Apply for a Business Operating Permit to get started.</p>
+              <p-button label="Apply now" routerLink="/app/services/business-operating-permit" />
+            } @else {
+              <h3>No applications match your filter</h3>
+              <p class="section-muted">Try a different search.</p>
+            }
           </div>
         </td>
       </tr>

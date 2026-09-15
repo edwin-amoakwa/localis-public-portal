@@ -1,19 +1,12 @@
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
-}
-
-.search-wrap {
-  flex: 1 1 320px;
+.search {
   position: relative;
   display: block;
+  max-width: 40rem;
+  margin-bottom: 1.5rem;
 
   i {
     position: absolute;
-    left: 0.9rem;
+    left: 1rem;
     top: 50%;
     transform: translateY(-50%);
     color: var(--asp-ink-400);
@@ -22,196 +15,133 @@
 
   input {
     width: 100%;
-    padding-left: 2.4rem;
+    height: 3rem;
+    padding-left: 2.6rem;
+    font-size: 1rem;
   }
 }
 
-.chips {
+.section-label {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
-
-.chip {
-  padding: 0.45rem 0.9rem;
-  border-radius: 999px;
-  border: 1px solid var(--asp-line);
-  background: var(--asp-card);
-  color: var(--asp-ink-600);
-  font: inherit;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-
-  &:hover {
-    border-color: var(--asp-blue-500);
-    color: var(--asp-blue-700);
-  }
-
-  &.is-active {
-    background: var(--asp-blue-700);
-    border-color: var(--asp-blue-700);
-    color: #fff;
-  }
-}
-
-.result-line {
-  font-size: 0.9rem;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--asp-ink-500);
-  margin-bottom: 1rem;
 }
 
 .link-btn {
+  padding: 0;
   border: 0;
   background: none;
-  padding: 0;
-  font: inherit;
-  font-weight: 600;
   color: var(--asp-blue-700);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
   cursor: pointer;
-  text-decoration: underline;
 }
 
-.category {
-  margin-bottom: 2rem;
-
-  &__head {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.85rem;
-    margin-bottom: 1rem;
-
-    h2 {
-      font-size: 1.15rem;
-      margin: 0;
-    }
-
-    p {
-      margin: 0.1rem 0 0;
-      font-size: 0.9rem;
-      color: var(--asp-ink-500);
-    }
-  }
-
-  &__icon {
-    width: 44px;
-    height: 44px;
-    flex: none;
-    border-radius: 12px;
-    display: grid;
-    place-items: center;
-    font-size: 1.15rem;
-  }
-}
-
-.service-grid {
+// --- Category tiles --------------------------------------------------------------
+.tiles {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
   gap: 1rem;
 }
 
-.service-card {
+.tile {
   display: flex;
   flex-direction: column;
+  gap: 0.55rem;
+  padding: 1.25rem;
+  border: 1px solid var(--asp-line);
+  border-radius: var(--asp-radius);
+  background: var(--asp-card);
+  color: var(--asp-ink);
+  text-decoration: none;
   transition:
-    transform 0.16s ease,
-    box-shadow 0.16s ease,
-    border-color 0.16s ease;
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 
-  &:hover {
-    transform: translateY(-2px);
+  &:hover,
+  &:focus-visible {
+    border-color: var(--asp-blue-500);
     box-shadow: var(--asp-shadow);
-    border-color: var(--asp-blue-100);
+    text-decoration: none;
   }
 
-  header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 0.6rem;
-    margin-bottom: 0.4rem;
-
-    h3 {
-      font-size: 1.02rem;
-      margin: 0;
-    }
+  .cat-icon {
+    margin-bottom: 0.25rem;
   }
 
-  &__summary {
-    font-size: 0.89rem;
-    color: var(--asp-ink-500);
-    margin-bottom: 0.9rem;
+  &__name {
+    font-weight: 700;
+    font-size: 1.02rem;
+    line-height: 1.3;
+  }
+
+  &__desc {
     flex: 1;
+    font-size: 0.87rem;
+    line-height: 1.45;
+    color: var(--asp-ink-500);
   }
 
-  &__meta {
-    display: flex;
-    gap: 1.5rem;
-    margin: 0 0 0.9rem;
-
-    dt {
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: var(--asp-ink-400);
-      margin-bottom: 0.1rem;
-    }
-
-    dd {
-      margin: 0;
-      font-size: 0.9rem;
-      font-weight: 650;
-    }
-  }
-
-  &__note {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
+  &__count {
     font-size: 0.8rem;
-    color: var(--asp-gold-700);
-    background: var(--asp-gold-100);
-    padding: 0.4rem 0.6rem;
-    border-radius: 8px;
-    margin-bottom: 0.9rem;
-  }
-
-  footer {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: auto;
+    font-weight: 600;
+    color: var(--asp-blue-700);
   }
 }
 
 .empty {
   text-align: center;
-  padding: 3rem 1.5rem;
+  padding: 2.5rem 1.5rem;
 
   i {
-    font-size: 2.2rem;
-    color: var(--asp-ink-400);
-    margin-bottom: 0.75rem;
     display: block;
+    font-size: 2rem;
+    color: var(--asp-gold-600);
+    margin-bottom: 0.6rem;
   }
 }
 
-@media (max-width: 1200px) {
-  .service-grid {
+// --- Phones: two compact columns, names only ---------------------------------------
+@media (max-width: 640px) {
+  .page-header p {
+    display: none;
+  }
+
+  .search {
+    margin-bottom: 1.1rem;
+  }
+
+  .tiles {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 720px) {
-  .service-grid {
-    grid-template-columns: 1fr;
+    gap: 0.7rem;
   }
 
-  .service-card footer {
-    flex-direction: column;
+  .tile {
+    padding: 0.9rem;
+    gap: 0.4rem;
 
-    ::ng-deep .p-button {
-      width: 100%;
+    .cat-icon {
+      width: 2.4rem;
+      height: 2.4rem;
+      font-size: 1rem;
+    }
+
+    &__name {
+      font-size: 0.95rem;
+    }
+
+    &__desc {
+      display: none;
     }
   }
 }

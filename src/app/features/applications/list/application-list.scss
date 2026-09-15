@@ -94,3 +94,7 @@
     grid-template-columns: 1fr;
   }
 }
+
+.summary-strip__item--alert .stat-tile__value {
+  color: var(--asp-gold-700);
+}

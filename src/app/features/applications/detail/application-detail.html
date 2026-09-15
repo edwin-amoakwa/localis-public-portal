@@ -1,220 +1,275 @@
-@if (application(); as app) {
-  <p-breadcrumb [model]="crumbs()" [home]="home" styleClass="mb-3" />
+<p-breadcrumb [model]="crumbs()" [home]="home" styleClass="page-crumbs" />
 
-  <!-- Header --------------------------------------------------------------- -->
+@if (loading() && !application()) {
+  <div class="asp-card empty">
+    <i class="pi pi-spin pi-spinner"></i>
+    <p class="section-muted">Loading application…</p>
+  </div>
+} @else if (application(); as app) {
+  <!-- Header ------------------------------------------------------------------ -->
   <section class="asp-card detail-head">
     <div class="detail-head__main">
       <div class="detail-head__title">
         <h1>{{ app.applicationNumber }}</h1>
-        <p-tag [value]="statusLabel(app.status)" [severity]="statusSeverity(app.status)" />
+        <p-tag [value]="app.statusLabel" [severity]="severity(app.status)" />
       </div>
-      <p class="detail-head__subject">{{ app.subject }}</p>
-
+      <p class="detail-head__subject">
+        {{ app.applicationTypeLabel }} — Business Operating Permit {{ app.permitYear }} · {{ app.business.businessName }}
+      </p>
       <dl class="detail-head__facts">
-        <div><dt>Service</dt><dd>{{ app.serviceName }}</dd></div>
-        <div><dt>Submitted</dt><dd>{{ app.submittedDate | date: 'd MMMM y' }}</dd></div>
-        <div><dt>Officer</dt><dd>{{ app.officer }}</dd></div>
-        <div><dt>Assembly</dt><dd>{{ app.assembly }}</dd></div>
+        <div><dt>Assembly</dt><dd>{{ app.assembly.assemblyName }}</dd></div>
+        <div><dt>Submitted</dt><dd>{{ app.submittedDate | date: 'd MMM y, HH:mm' }}</dd></div>
+        <div><dt>Category</dt><dd>{{ app.business.categoryName }}</dd></div>
+        @if (app.business.businessNumber) {
+          <div><dt>Business number</dt><dd class="mono">{{ app.business.businessNumber }}</dd></div>
+        }
       </dl>
     </div>
 
-    @if (outstanding() > 0) {
-      <div class="detail-head__cta">
+    <div class="detail-head__cta">
+      @if (app.status === 'AWAITING_PAYMENT') {
         <span class="detail-head__due">
-          {{ outstanding() | currency: 'GHS ' : 'symbol' : '1.2-2' }}
-          <small>outstanding</small>
+          <small>Amount to pay</small>
+          {{ app.outstandingAmount | currency: 'GHS ' : 'symbol' : '1.2-2' }}
         </span>
-        @if (invoice(); as inv) {
-          <p-button
-            label="Pay now"
-            icon="pi pi-credit-card"
-            [routerLink]="['/app/payments/pay', inv.id]"
-          />
-        }
-      </div>
-    }
+        <p-button label="Pay with Mobile Money" icon="pi pi-mobile" size="large" (onClick)="openPay()" />
+      } @else if (app.status === 'ISSUED') {
+        <p-button
+          label="View / print permit"
+          icon="pi pi-file-pdf"
+          severity="success"
+          size="large"
+          [loading]="loadingPermit()"
+          (onClick)="viewPermit()"
+        />
+      }
+    </div>
   </section>
+
+  <!-- Where it is now ------------------------------------------------------ -->
+  @switch (app.status) {
+    @case ('SUBMITTED') {
+      <p class="status-banner status-banner--info">
+        <i class="pi pi-hourglass"></i>
+        <span><strong>With the Assembly.</strong> An officer will review your application and approve it for
+        payment. We will text you when it is ready to pay.</span>
+      </p>
+    }
+    @case ('UNDER_REVIEW') {
+      <p class="status-banner status-banner--info">
+        <i class="pi pi-search"></i>
+        <span><strong>Under review.</strong> We will text you when it is approved for payment.</span>
+      </p>
+    }
+    @case ('AWAITING_PAYMENT') {
+      <p class="status-banner status-banner--gold">
+        <i class="pi pi-wallet"></i>
+        <span><strong>Approved for payment.</strong> Pay
+        {{ app.outstandingAmount | currency: 'GHS ' : 'symbol' : '1.2-2' }} by Mobile Money to move on to your
+        permit.</span>
+      </p>
+    }
+    @case ('PAYMENT_CONFIRMATION') {
+      <p class="status-banner status-banner--info">
+        <i class="pi pi-clock"></i>
+        <span><strong>Payment received — awaiting confirmation.</strong> The Assembly is confirming your payment.
+        Your permit is generated as soon as it is confirmed.</span>
+      </p>
+    }
+    @case ('ISSUED') {
+      <p class="status-banner status-banner--green">
+        <i class="pi pi-verified"></i>
+        <span><strong>Permit generated.</strong> Permit {{ app.permit?.permitNumber }} is valid until
+        {{ app.permit?.expiryDate | date: 'd MMMM y' }}. Print it and display it at your premises.</span>
+      </p>
+    }
+  }
 
   <div class="detail-grid">
     <div class="detail-main">
-      <!-- Timeline --------------------------------------------------------- -->
+      <!-- Business ---------------------------------------------------------- -->
       <section class="asp-card">
-        <h2>Application history</h2>
-        <p-timeline [value]="app.timeline" align="left" styleClass="app-timeline">
-          <ng-template pTemplate="marker" let-event>
-            <span class="timeline-marker" [class]="markerClass(event.status)">
-              <i [class]="markerIcon(event.status)"></i>
+        <h2>Business details</h2>
+        <dl class="kyc-grid">
+          <div><dt>Business name</dt><dd>{{ app.business.businessName }}</dd></div>
+          <div><dt>Company type</dt><dd>{{ app.business.ownershipTypeLabel || '—' }}</dd></div>
+          <div><dt>Category</dt><dd>{{ app.business.categoryName || '—' }}</dd></div>
+          <div><dt>What the business does</dt><dd>{{ natureLabel(app.business.natureOfBusiness) }}</dd></div>
+          <div><dt>Registration number</dt><dd>{{ app.business.registrationNo || '—' }}</dd></div>
+          <div><dt>TIN</dt><dd>{{ app.business.tinNo || '—' }}</dd></div>
+          <div>
+            <dt>Experience</dt>
+            <dd>{{ app.business.yearsInOperation }} yrs, {{ app.business.monthsInOperation }} mo</dd>
+          </div>
+          <div><dt>Employees</dt><dd>{{ app.business.noOfEmployees }}</dd></div>
+          <div class="kyc-grid__wide"><dt>Premises</dt><dd>{{ app.business.streetName || '—' }}</dd></div>
+          <div><dt>Digital address</dt><dd>{{ app.business.digitalAddress || '—' }}</dd></div>
+          <div><dt>Postal address</dt><dd>{{ app.business.postalAddress || '—' }}</dd></div>
+          @if (app.business.regionalPresence.length) {
+            <div class="kyc-grid__wide">
+              <dt>Also present in</dt><dd>{{ app.business.regionalPresence.join(', ') }}</dd>
+            </div>
+          }
+          @if (app.business.coreBusinessDescription) {
+            <div class="kyc-grid__wide">
+              <dt>Core business</dt><dd>{{ app.business.coreBusinessDescription }}</dd>
+            </div>
+          }
+        </dl>
+      </section>
+
+      <!-- Trail --------------------------------------------------------------- -->
+      <section class="asp-card">
+        <h2>Progress</h2>
+        <p-timeline [value]="app.trail ?? []" align="left" class="app-timeline">
+          <ng-template #marker let-event>
+            <span class="timeline-marker" [class]="markerClass(event.toStatus)">
+              <i [class]="markerIcon(event.toStatus)"></i>
             </span>
           </ng-template>
-          <ng-template pTemplate="content" let-event>
+          <ng-template #content let-event>
             <div class="timeline-item">
               <div class="timeline-item__head">
-                <strong>{{ event.title }}</strong>
-                <time>{{ event.date }}</time>
+                <strong>{{ event.toStatusLabel }}</strong>
+                <time>{{ event.eventDate | date: 'd MMM y, HH:mm' }}</time>
               </div>
-              @if (event.detail) {
-                <p>{{ event.detail }}</p>
+              @if (event.remarks) {
+                <p>{{ event.remarks }}</p>
               }
-              <small>by {{ event.actor }}</small>
+              <small>by {{ event.actionedByName }}</small>
             </div>
           </ng-template>
         </p-timeline>
       </section>
-
-      <!-- Officer comments -------------------------------------------------- -->
-      @if (app.officerComments) {
-        <section class="asp-card comment-card">
-          <h2>Officer comments</h2>
-          <blockquote>
-            <p>{{ app.officerComments }}</p>
-            <cite>{{ app.officer }} &middot; {{ app.assembly }}</cite>
-          </blockquote>
-        </section>
-      }
-
-      <!-- Documents --------------------------------------------------------- -->
-      <section class="asp-card">
-        <h2>Documents</h2>
-        @if (app.documents.length === 0) {
-          <p class="section-muted mb-0">No documents were attached to this application.</p>
-        } @else {
-          <ul class="doc-list">
-            @for (doc of app.documents; track doc.name) {
-              <li>
-                <span class="doc-list__icon"><i class="pi pi-file"></i></span>
-                <span class="doc-list__body">
-                  <strong>{{ doc.name }}</strong>
-                  <small>{{ doc.type }} · {{ doc.size }} · uploaded {{ doc.uploadedOn | date: 'd MMM y' }}</small>
-                </span>
-                @if (doc.verified) {
-                  <p-tag value="Verified" severity="success" styleClass="text-tiny" />
-                } @else {
-                  <p-tag value="Pending check" severity="warn" styleClass="text-tiny" />
-                }
-                <p-button
-                  icon="pi pi-download"
-                  severity="secondary"
-                  [text]="true"
-                  [rounded]="true"
-                  ariaLabel="Download document"
-                  (onClick)="download(doc.name)"
-                />
-              </li>
-            }
-          </ul>
-        }
-      </section>
     </div>
 
     <aside class="detail-aside">
-      <!-- Payment ----------------------------------------------------------- -->
+      <!-- Payment ---------------------------------------------------------- -->
       <section class="asp-card">
         <h2>Payment</h2>
-        @if (app.amountDue === 0) {
-          <p class="section-muted mb-0">No fee is payable on this application.</p>
-        } @else {
+        @if (app.invoice; as invoice) {
           <div class="pay-figures">
-            <div>
-              <span>Assessed</span>
-              <strong>{{ app.amountDue | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
-            </div>
-            <div>
-              <span>Paid</span>
-              <strong class="paid">{{ app.amountPaid | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
-            </div>
+            <div><span>Assessed</span><strong>{{ invoice.totalAmount | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong></div>
+            <div><span>Paid</span><strong class="paid">{{ invoice.amountPaid | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong></div>
             <div>
               <span>Outstanding</span>
-              <strong [class.due]="outstanding() > 0">
-                {{ outstanding() | currency: 'GHS ' : 'symbol' : '1.2-2' }}
-              </strong>
+              <strong [class.due]="app.outstandingAmount > 0">{{ app.outstandingAmount | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
             </div>
           </div>
+          <p-progressbar [value]="paidPercent()" [showValue]="false" class="pay-bar" />
 
-          <p-progressbar [value]="paidPercent()" [showValue]="false" styleClass="pay-bar" />
-          <p class="text-tiny section-muted">{{ paidPercent() }}% settled</p>
-
-          @if (invoice(); as inv) {
-            <dl class="aside-facts">
-              <div><dt>Invoice</dt><dd class="mono">{{ inv.invoiceNumber }}</dd></div>
-              <div><dt>Issued</dt><dd>{{ inv.issuedDate | date: 'd MMM y' }}</dd></div>
-              <div><dt>Due</dt><dd>{{ inv.dueDate | date: 'd MMM y' }}</dd></div>
-            </dl>
-
-            @if (outstanding() > 0) {
-              <p-button
-                label="Settle invoice"
-                icon="pi pi-credit-card"
-                styleClass="w-full"
-                [routerLink]="['/app/payments/pay', inv.id]"
-              />
-            } @else {
-              <p-button
-                label="View payments"
-                severity="secondary"
-                [outlined]="true"
-                styleClass="w-full"
-                routerLink="/app/payments"
-              />
+          <dl class="aside-facts">
+            <div><dt>Invoice</dt><dd class="mono">{{ invoice.invoiceNumber }}</dd></div>
+            @for (item of invoice.items; track item.itemName) {
+              <div><dt>{{ item.itemName }}</dt><dd>{{ item.amount | currency: 'GHS ' : 'symbol' : '1.2-2' }}</dd></div>
             }
+          </dl>
+
+          @for (payment of app.payments ?? []; track payment.receiptNumber) {
+            <div class="receipt">
+              <div>
+                <strong class="mono">{{ payment.receiptNumber }}</strong>
+                <small>{{ payment.paymentModeLabel }} · {{ payment.payerPhoneNo }} · {{ payment.paymentDate | date: 'd MMM y' }}</small>
+              </div>
+              <div class="receipt__amount">
+                {{ payment.amount | currency: 'GHS ' : 'symbol' : '1.2-2' }}
+                <p-tag
+                  [value]="payment.confirmed ? 'Confirmed' : 'Awaiting confirmation'"
+                  [severity]="payment.confirmed ? 'success' : 'warn'"
+                />
+              </div>
+            </div>
           }
+
+          @if (app.status === 'AWAITING_PAYMENT') {
+            <p-button label="Pay with Mobile Money" icon="pi pi-mobile" styleClass="w-full" (onClick)="openPay()" />
+          }
+        } @else {
+          <p class="section-muted mb-0">
+            The fee is set when the Assembly approves your application for payment.
+          </p>
         }
       </section>
 
-      <!-- Inspection -------------------------------------------------------- -->
-      @if (app.inspection; as inspection) {
-        <section class="asp-card">
-          <h2>Inspection</h2>
+      <!-- Permit ------------------------------------------------------------- -->
+      @if (app.permit; as permit) {
+        <section class="asp-card permit-card">
+          <h2><i class="pi pi-verified"></i> Business Operating Permit</h2>
           <dl class="aside-facts">
-            <div><dt>Scheduled</dt><dd>{{ inspection.scheduledDate | date: 'd MMM y' }}</dd></div>
-            <div><dt>Inspector</dt><dd>{{ inspection.inspector }}</dd></div>
-            <div>
-              <dt>Outcome</dt>
-              <dd>
-                <p-tag
-                  [value]="inspection.outcome === 'PENDING' ? 'Pending' : inspection.outcome"
-                  [severity]="inspection.outcome === 'PENDING' ? 'warn' : 'success'"
-                  styleClass="text-tiny"
-                />
-              </dd>
-            </div>
+            <div><dt>Permit number</dt><dd class="mono">{{ permit.permitNumber }}</dd></div>
+            <div><dt>Issued</dt><dd>{{ permit.issueDate | date: 'd MMM y' }}</dd></div>
+            <div><dt>Valid until</dt><dd>{{ permit.expiryDate | date: 'd MMM y' }}</dd></div>
+            <div><dt>Verification code</dt><dd class="mono">{{ permit.verificationCode }}</dd></div>
           </dl>
-          @if (inspection.notes) {
-            <p class="hint-box">
-              <i class="pi pi-info-circle"></i>
-              {{ inspection.notes }}
-            </p>
-          }
           <p-button
-            label="View appointments"
-            severity="secondary"
-            [outlined]="true"
+            label="View / print permit"
+            icon="pi pi-file-pdf"
+            severity="success"
             styleClass="w-full"
-            routerLink="/app/appointments"
+            [loading]="loadingPermit()"
+            (onClick)="viewPermit()"
           />
         </section>
       }
-
-      <section class="asp-card">
-        <h2>Need help?</h2>
-        <p class="section-muted text-tiny">
-          Questions about this application should go to the Assembly handling it.
-        </p>
-        <p-button
-          label="Message the Assembly"
-          icon="pi pi-comments"
-          severity="secondary"
-          [outlined]="true"
-          styleClass="w-full"
-          routerLink="/app/messages"
-        />
-      </section>
     </aside>
   </div>
-} @else {
+
+  <!-- Mobile Money --------------------------------------------------------- -->
+  <p-dialog
+    header="Pay with Mobile Money"
+    [visible]="payOpen()"
+    (visibleChange)="payOpen.set($event)"
+    [modal]="true"
+    [draggable]="false"
+    [style]="{ width: '26rem' }"
+    [breakpoints]="{ '640px': '94vw' }"
+  >
+    <form [formGroup]="payForm" (ngSubmit)="pay()" novalidate class="pay-form">
+      <div class="pay-form__amount">
+        <span>Amount</span>
+        <strong>{{ app.outstandingAmount | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
+        <small>{{ app.invoice?.invoiceNumber }} · {{ app.business.businessName }}</small>
+      </div>
+
+      <div class="field">
+        <label for="momo">Mobile Money Account <span class="req">*</span></label>
+        <input
+          pInputText
+          id="momo"
+          formControlName="mobileMoneyNumber"
+          type="tel"
+          autocomplete="tel"
+          placeholder="024 000 0000"
+          class="w-full"
+        />
+        @if (payForm.controls.mobileMoneyNumber.touched && payForm.controls.mobileMoneyNumber.invalid) {
+          <small class="field-error">Enter the Mobile Money number to pay from.</small>
+        }
+      </div>
+
+      <div class="pay-form__actions">
+        <p-button label="Cancel" severity="secondary" [text]="true" type="button" (onClick)="payOpen.set(false)" />
+        <p-button
+          [label]="'Pay ' + (app.outstandingAmount | currency: 'GHS ' : 'symbol' : '1.2-2')"
+          icon="pi pi-mobile"
+          type="submit"
+          [loading]="paying()"
+        />
+      </div>
+    </form>
+  </p-dialog>
+
+  <app-report-viewer
+    [title]="reportData.reportTitle"
+    [pdfUrl]="reportData.pdfUrl"
+    [visible]="viewerOpen()"
+    (visibleChange)="viewerOpen.set($event)"
+  />
+} @else if (notFound()) {
   <div class="asp-card empty">
-    <i class="pi pi-exclamation-triangle"></i>
+    <i class="pi pi-inbox"></i>
     <h2>Application not found</h2>
-    <p class="section-muted">That application is not on your account.</p>
+    <p class="section-muted">It may belong to another account.</p>
     <p-button label="Back to applications" routerLink="/app/applications" />
   </div>
 }

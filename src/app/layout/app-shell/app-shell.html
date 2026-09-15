@@ -29,15 +29,6 @@
     </a>
   </div>
 
-  <nav class="topbar__nav" aria-label="Main">
-    <a routerLink="/app/dashboard" routerLinkActive="is-active">Dashboard</a>
-    <a routerLink="/app/services" routerLinkActive="is-active">Services</a>
-    <a routerLink="/app/applications" routerLinkActive="is-active">Applications</a>
-    <a routerLink="/app/payments" routerLinkActive="is-active">Payments</a>
-    <a routerLink="/app/documents" routerLinkActive="is-active">Documents</a>
-    <a routerLink="/app/appointments" routerLinkActive="is-active">Appointments</a>
-  </nav>
-
   <div class="topbar__right">
     <button
       class="icon-btn"
@@ -83,7 +74,7 @@
       <p-avatar
         [label]="user()?.avatarInitials"
         shape="circle"
-        styleClass="profile-btn__avatar"
+        class="profile-btn__avatar"
       />
       <span class="profile-btn__name">
         {{ user()?.firstName }} {{ user()?.lastName }}

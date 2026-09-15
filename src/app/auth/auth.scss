@@ -154,6 +154,11 @@
     color: #c0342c;
   }
 
+  .optional {
+    font-weight: 400;
+    color: var(--asp-ink-400);
+  }
+
   input,
   ::ng-deep .p-select,
   ::ng-deep .p-password,

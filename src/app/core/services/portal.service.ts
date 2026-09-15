@@ -19,10 +19,12 @@ import {
   Application,
   ApplicationStatus,
   AssemblyService,
+  BusinessProfile,
   Invoice,
   PaymentMethod,
   Receipt,
   ServiceCategoryId,
+  UserProfile,
 } from '../models';
 
 /**
@@ -60,7 +62,9 @@ export class PortalService {
   readonly threads = this._threads.asReadonly();
   readonly documents = this._documents.asReadonly();
 
-  readonly businesses = signal([...BUSINESSES]).asReadonly();
+  private readonly _businesses = signal<BusinessProfile[]>([...BUSINESSES]);
+  readonly businesses = this._businesses.asReadonly();
+
   readonly properties = signal([...PROPERTIES]).asReadonly();
   readonly activities = signal([...ACTIVITIES]).asReadonly();
 
@@ -147,13 +151,57 @@ export class PortalService {
     return this._threads().find((t) => t.id === id);
   }
 
+  businessById(id: string): BusinessProfile | undefined {
+    return this._businesses().find((b) => b.id === id);
+  }
+
   // --- Commands -------------------------------------------------------------
+
+  /**
+   * Creates or updates a stored business record and returns it. Businesses
+   * are kept separately from applications precisely so a renewal — or any
+   * later application against the same business — can reuse this record
+   * instead of the applicant retyping it every time.
+   *
+   * The business number is deliberately not invented here: it is a
+   * district-coded, gapless sequence (`{ASSEMBLY_CODE}/BUS/000123`, see
+   * `SequenceService.businessNumber` in localis-api) that only the Assembly's
+   * own backend may issue. A new business is left "Pending" until that
+   * number comes back from a real submission.
+   */
+  saveBusiness(details: Omit<BusinessProfile, 'id' | 'businessNumber' | 'assembly' | 'status'> & {
+    id?: string;
+  }): BusinessProfile {
+    const existing = details.id ? this.businessById(details.id) : undefined;
+
+    if (existing) {
+      const updated: BusinessProfile = { ...existing, ...details, id: existing.id };
+      this._businesses.update((list) => list.map((b) => (b.id === existing.id ? updated : b)));
+      return updated;
+    }
+
+    const created: BusinessProfile = {
+      ...details,
+      id: `biz-${Math.random().toString(36).slice(2, 8)}`,
+      businessNumber: 'Pending — issued by the Assembly',
+      assembly: 'Ga East Municipal Assembly',
+      status: 'ACTIVE',
+    };
+
+    this._businesses.update((list) => [created, ...list]);
+    return created;
+  }
 
   /**
    * Files a new application and raises its invoice, mirroring what the backend
    * would do on submission: number the application, stamp the trail, and bill.
    */
-  submitApplication(service: AssemblyService, subject: string, documentNames: string[]): Application {
+  submitApplication(
+    service: AssemblyService,
+    subject: string,
+    documentNames: string[],
+    businessId?: string,
+  ): Application {
     const now = new Date();
     const applicationNumber = this.nextApplicationNumber();
     const total = service.fees.reduce((sum, fee) => sum + fee.amount, 0);
@@ -188,6 +236,7 @@ export class PortalService {
       amountPaid: 0,
       subject,
       invoiceId: invoice.id,
+      businessId,
       documents: documentNames.map((name) => ({
         name,
         type: name.split('.').pop()?.toUpperCase() ?? 'PDF',
@@ -296,6 +345,20 @@ export class PortalService {
     });
 
     return receipt;
+  }
+
+  /**
+   * Adds the in-app welcome notification after registration. The SMS itself
+   * is sent by localis-api when the account is created; email confirmation
+   * is not wired on the server yet, so none is claimed here.
+   */
+  sendRegistrationConfirmation(user: UserProfile): void {
+    this.pushNotification({
+      kind: 'ANNOUNCEMENT',
+      title: 'Welcome to the Assembly Services Portal',
+      body: `Your account is ready. A confirmation SMS was sent to ${user.phone}.`,
+      link: '/app/settings',
+    });
   }
 
   markNotificationRead(id: string): void {

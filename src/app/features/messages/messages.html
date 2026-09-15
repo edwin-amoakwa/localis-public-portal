@@ -22,7 +22,7 @@
             [class.is-unread]="thread.unread"
             (click)="select(thread.id)"
           >
-            <p-avatar [label]="initials(thread.officer)" shape="circle" styleClass="thread-avatar" />
+            <p-avatar [label]="initials(thread.officer)" shape="circle" class="thread-avatar" />
             <span class="thread-list__body">
               <span class="thread-list__head">
                 <strong>{{ thread.subject }}</strong>

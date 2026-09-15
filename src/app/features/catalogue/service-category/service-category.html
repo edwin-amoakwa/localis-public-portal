@@ -1,0 +1,38 @@
+@if (category(); as cat) {
+  <a class="back-link" routerLink="/app/services">
+    <i class="pi pi-arrow-left" aria-hidden="true"></i> All services
+  </a>
+
+  <header class="cat-head">
+    <span class="cat-icon" [class]="'tint-' + cat.tint">
+      <i [class]="cat.icon" aria-hidden="true"></i>
+    </span>
+    <div>
+      <h1>{{ cat.name }}</h1>
+      <p>{{ cat.description }}</p>
+    </div>
+  </header>
+
+  <section class="asp-card asp-card--flush">
+    <ul class="service-rows">
+      @for (service of services(); track service.id) {
+        <li>
+          <a class="service-row" [routerLink]="['/app/services', service.slug]">
+            <span class="service-row__text">
+              <span class="service-row__name">{{ service.name }}</span>
+              <span class="service-row__sub service-row__sub--desktop">{{ service.summary }}</span>
+            </span>
+            <span class="service-row__meta">{{ service.processingTime }}</span>
+            <i class="pi pi-angle-right" aria-hidden="true"></i>
+          </a>
+        </li>
+      }
+    </ul>
+  </section>
+} @else {
+  <div class="asp-card not-found">
+    <h2>Category not found</h2>
+    <p class="section-muted">That category is not in the catalogue.</p>
+    <p-button label="All services" routerLink="/app/services" />
+  </div>
+}

@@ -42,7 +42,10 @@ export class ServiceDetailPage {
 
   protected readonly crumbs = computed<MenuItem[]>(() => [
     { label: 'Services', routerLink: '/app/services' },
-    { label: this.category()?.name ?? '' },
+    {
+      label: this.category()?.name ?? '',
+      routerLink: this.category() ? ['/app/services/category', this.category()!.id] : undefined,
+    },
     { label: this.service()?.name ?? '' },
   ]);
 

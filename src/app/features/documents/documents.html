@@ -41,7 +41,7 @@
     (ngModelChange)="kind.set($event)"
     placeholder="All document types"
     [showClear]="true"
-    styleClass="kind-filter"
+    class="kind-filter"
     appendTo="body"
   />
 
@@ -60,7 +60,7 @@
         <p-tag
           [value]="statusLabel(doc.status)"
           [severity]="statusSeverity(doc.status)"
-          styleClass="text-tiny"
+          class="text-tiny"
         />
       </header>
 

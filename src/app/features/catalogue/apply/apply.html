@@ -17,7 +17,7 @@
     [model]="stepItems()"
     [activeIndex]="stepIndex()"
     [readonly]="true"
-    styleClass="apply-steps"
+    class="apply-steps"
   />
 
   <div class="apply-grid">
@@ -61,50 +61,200 @@
       <!-- 2. Business ------------------------------------------------------ -->
       @if (currentStep() === 'business') {
         <h2>Business information</h2>
-        <p class="section-muted">
-          Choose one of your registered businesses to fill this in, or enter a new one.
-        </p>
 
-        <div class="prefill">
-          @for (business of businesses(); track business.id) {
-            <button type="button" class="prefill__chip" (click)="useBusiness(business.id)">
-              <i class="pi pi-briefcase"></i>
-              <span>
-                <strong>{{ business.businessName }}</strong>
-                <small>{{ business.category }}</small>
-              </span>
-            </button>
+        @if (isRenewal()) {
+          @if (businesses().length > 0) {
+            <p class="hint-box">
+              <i class="pi pi-info-circle"></i>
+              A renewal applies to a business already on file. We've brought its details in below —
+              update anything that has changed.
+            </p>
+          } @else {
+            <p class="hint-box hint-box--warn">
+              <i class="pi pi-exclamation-triangle"></i>
+              You have no registered business on file to renew. Apply for a new Business Operating
+              Permit instead.
+            </p>
           }
-        </div>
+        } @else if (isLive()) {
+          <p class="section-muted">
+            Modelled on the Assembly's KYC registration form. Choose the District Assembly where the
+            business operates, then tell us about the business.
+          </p>
+        } @else {
+          <p class="section-muted">
+            Modelled on the Assembly's KYC registration form. Choose one of your registered
+            businesses to fill this in, or enter a new one.
+          </p>
+
+          <div class="prefill">
+            @for (business of businesses(); track business.id) {
+              <button type="button" class="prefill__chip" (click)="useBusiness(business.id)">
+                <i class="pi pi-briefcase"></i>
+                <span>
+                  <strong>{{ business.businessName }}</strong>
+                  <small>{{ business.category }}</small>
+                </span>
+              </button>
+            }
+          </div>
+        }
 
         <form [formGroup]="businessForm" class="form-grid">
+          @if (isLive()) {
+            <h3 class="form-grid__heading">Where the business operates</h3>
+            <div class="field">
+              <label for="region">Region <span class="req">*</span></label>
+              <p-select
+                inputId="region"
+                [options]="liveRegions()"
+                optionLabel="regionName"
+                optionValue="id"
+                [ngModel]="regionId()"
+                (ngModelChange)="chooseRegion($event)"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="Select the region"
+                class="w-full"
+                appendTo="body"
+              />
+            </div>
+            <div class="field">
+              <label for="assembly">District Assembly <span class="req">*</span></label>
+              <p-select
+                inputId="assembly"
+                formControlName="assemblyId"
+                [options]="liveAssemblies()"
+                optionLabel="assemblyName"
+                optionValue="id"
+                placeholder="Select the Assembly"
+                emptyMessage="Choose a region first"
+                class="w-full"
+                appendTo="body"
+              />
+              @if (businessForm.controls.assemblyId.touched && businessForm.controls.assemblyId.invalid) {
+                <small class="field-error">Choose the Assembly the business operates in.</small>
+              }
+            </div>
+          }
+
+          <h3 class="form-grid__heading">Company information</h3>
           <div class="field field--full">
             <label for="businessName">Business name <span class="req">*</span></label>
             <input pInputText id="businessName" formControlName="businessName" />
           </div>
           <div class="field">
-            <label for="category">Business category <span class="req">*</span></label>
-            <input pInputText id="category" formControlName="category" placeholder="e.g. Retail Shop" />
+            <label for="ownershipType">Company type <span class="req">*</span></label>
+            <p-select
+              inputId="ownershipType"
+              formControlName="ownershipType"
+              [options]="ownershipTypes"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Sole proprietor, partnership, Ltd…"
+              class="w-full"
+              appendTo="body"
+            />
           </div>
           <div class="field">
-            <label for="registrationNo">Registration number</label>
+            <label for="category">Business category <span class="req">*</span></label>
+            @if (isLive()) {
+              <p-select
+                inputId="category"
+                formControlName="categoryId"
+                [options]="categories()"
+                optionLabel="categoryName"
+                optionValue="id"
+                [filter]="true"
+                filterBy="categoryName"
+                placeholder="Select the category"
+                emptyMessage="Choose the Assembly first"
+                class="w-full"
+                appendTo="body"
+              />
+            } @else {
+              <input pInputText id="category" formControlName="category" placeholder="e.g. Retail Shop" />
+            }
+          </div>
+          <div class="field">
+            <label for="registrationNo">Registration number (DTI)</label>
             <input pInputText id="registrationNo" formControlName="registrationNo" />
           </div>
           <div class="field">
             <label for="tin">TIN</label>
             <input pInputText id="tin" formControlName="tinNo" />
           </div>
+
+          <h3 class="form-grid__heading">What the business does</h3>
+          <div class="field field--full">
+            <label>What do you do? <span class="req">*</span></label>
+            <div class="chip-toggle-row">
+              @for (option of natureOptions; track option.value) {
+                <button
+                  type="button"
+                  class="chip-toggle"
+                  [class.is-selected]="businessForm.value.natureOfBusiness === option.value"
+                  (click)="businessForm.controls.natureOfBusiness.setValue(option.value)"
+                >
+                  {{ option.label }}
+                </button>
+              }
+            </div>
+          </div>
+          <div class="field field--full">
+            <label for="coreBusiness">Briefly describe your core business</label>
+            <textarea
+              pTextarea
+              id="coreBusiness"
+              formControlName="coreBusinessDescription"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <h3 class="form-grid__heading">Experience &amp; reach</h3>
+          <div class="field">
+            <label for="years">Years in this industry</label>
+            <input pInputText id="years" type="number" min="0" formControlName="yearsInOperation" />
+          </div>
+          <div class="field">
+            <label for="months">Additional months</label>
+            <input pInputText id="months" type="number" min="0" max="11" formControlName="monthsInOperation" />
+          </div>
+          <div class="field field--full">
+            <label>Also has a presence in <span class="hint">(other regions, if any)</span></label>
+            <div class="chip-toggle-row">
+              @for (region of regionNames(); track region) {
+                <button
+                  type="button"
+                  class="chip-toggle"
+                  [class.is-selected]="hasRegion(region)"
+                  (click)="toggleRegion(region)"
+                >
+                  {{ region }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <h3 class="form-grid__heading">Location</h3>
           <div class="field">
             <label for="employees">Number of employees</label>
             <input pInputText id="employees" type="number" formControlName="employees" />
           </div>
           <div class="field">
-            <label for="bizLocation">Location of premises <span class="req">*</span></label>
+            <label for="bizLocation">Physical location of premises <span class="req">*</span></label>
             <input pInputText id="bizLocation" formControlName="location" />
+          </div>
+          <div class="field">
+            <label for="postal">Postal address</label>
+            <input pInputText id="postal" formControlName="postalAddress" />
           </div>
           <div class="field">
             <label for="bizDigital">Digital address</label>
             <input pInputText id="bizDigital" formControlName="digitalAddress" />
+          </div>
+          <div class="field">
+            <label for="website">Website <span class="hint">(if available)</span></label>
+            <input pInputText id="website" formControlName="website" placeholder="https://" />
           </div>
         </form>
       }
@@ -139,7 +289,7 @@
               inputId="use"
               formControlName="use"
               [options]="propertyUses"
-              styleClass="w-full"
+              class="w-full"
               appendTo="body"
             />
           </div>
@@ -182,7 +332,7 @@
               dateFormat="d MM yy"
               [showIcon]="true"
               appendTo="body"
-              styleClass="w-full"
+              class="w-full"
             />
           </div>
           <div class="field field--full">
@@ -264,10 +414,27 @@
             <h3>Business</h3>
             <dl>
               <div><dt>Name</dt><dd>{{ businessForm.value.businessName }}</dd></div>
+              @if (isLive()) {
+                <div><dt>Assembly</dt><dd>{{ assemblyName(businessForm.value.assemblyId) }}</dd></div>
+              }
+              <div><dt>Company type</dt><dd>{{ ownershipLabel(businessForm.value.ownershipType) }}</dd></div>
               <div><dt>Category</dt><dd>{{ businessForm.value.category }}</dd></div>
               <div><dt>Registration</dt><dd>{{ businessForm.value.registrationNo || '—' }}</dd></div>
               <div><dt>TIN</dt><dd>{{ businessForm.value.tinNo || '—' }}</dd></div>
+              <div>
+                <dt>Experience</dt>
+                <dd>{{ businessForm.value.yearsInOperation || 0 }} yrs, {{ businessForm.value.monthsInOperation || 0 }} mo</dd>
+              </div>
+              @if ((businessForm.value.regionalPresence?.length ?? 0) > 0) {
+                <div><dt>Also present in</dt><dd>{{ businessForm.value.regionalPresence?.join(', ') }}</dd></div>
+              }
               <div><dt>Location</dt><dd>{{ businessForm.value.location }}</dd></div>
+              @if (businessForm.value.postalAddress) {
+                <div><dt>Postal address</dt><dd>{{ businessForm.value.postalAddress }}</dd></div>
+              }
+              @if (businessForm.value.website) {
+                <div><dt>Website</dt><dd>{{ businessForm.value.website }}</dd></div>
+              }
             </dl>
           </section>
         }
@@ -308,6 +475,12 @@
 
         <section class="review-block review-block--fees">
           <h3>Fees</h3>
+          @if (isLive()) {
+            <p class="section-muted mb-0">
+              The Assembly fixes the fee when it approves your application for payment. We will text you
+              the amount, and you can then pay by Mobile Money from My applications.
+            </p>
+          } @else {
           <ul>
             @for (fee of svc.fees; track fee.name) {
               <li>
@@ -320,6 +493,7 @@
             <span>Total payable</span>
             <strong>{{ totalFee() | currency: 'GHS ' : 'symbol' : '1.2-2' }}</strong>
           </div>
+          }
         </section>
 
         <form [formGroup]="confirmForm" class="declaration">
@@ -339,7 +513,39 @@
 
       <!-- 7. Confirmation -------------------------------------------------- -->
       @if (currentStep() === 'confirm') {
-        @if (submitted(); as application) {
+        @if (submittedRecord(); as record) {
+          <div class="confirmation">
+            <span class="confirmation__icon"><i class="pi pi-check"></i></span>
+            <h2>Application submitted</h2>
+            <p class="section-muted">
+              Your application has been received by {{ record.assembly.assemblyName }}. We will text you when
+              it is approved for payment.
+            </p>
+
+            <div class="confirmation__ref">
+              <span>Application number</span>
+              <strong>{{ record.applicationNumber }}</strong>
+            </div>
+
+            <dl class="confirmation__facts">
+              <div><dt>Business</dt><dd>{{ record.business.businessName }}</dd></div>
+              <div><dt>Category</dt><dd>{{ record.business.categoryName }}</dd></div>
+              <div><dt>Status</dt><dd>{{ record.statusLabel }}</dd></div>
+              <div><dt>Permit year</dt><dd>{{ record.permitYear }}</dd></div>
+            </dl>
+
+            <div class="confirmation__actions">
+              <p-button
+                label="View application"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                size="large"
+                [routerLink]="['/app/applications', record.id]"
+              />
+              <p-button label="Back to dashboard" severity="secondary" [text]="true" size="large" routerLink="/app/dashboard" />
+            </div>
+          </div>
+        } @else if (submitted(); as application) {
           <div class="confirmation">
             <span class="confirmation__icon"><i class="pi pi-check"></i></span>
             <h2>Application submitted</h2>
@@ -422,7 +628,10 @@
         <p class="section-muted text-tiny">{{ svc.summary }}</p>
         <dl class="aside-facts">
           <div><dt>Processing</dt><dd>{{ svc.processingTime }}</dd></div>
-          <div><dt>Total fees</dt><dd>{{ totalFee() | currency: 'GHS ' : 'symbol' : '1.2-2' }}</dd></div>
+          <div>
+            <dt>Total fees</dt>
+            <dd>{{ isLive() ? 'Set on approval' : (totalFee() | currency: 'GHS ' : 'symbol' : '1.2-2') }}</dd>
+          </div>
           <div>
             <dt>Inspection</dt>
             <dd>{{ svc.requiresInspection ? 'Required' : 'Not required' }}</dd>

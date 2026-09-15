@@ -29,34 +29,6 @@
     display: none;
   }
 
-  &__nav {
-    display: flex;
-    align-items: center;
-    gap: 0.15rem;
-    flex: 1;
-    justify-content: center;
-
-    a {
-      padding: 0.5rem 0.75rem;
-      border-radius: var(--asp-radius-sm);
-      font-size: 0.92rem;
-      font-weight: 600;
-      color: var(--asp-ink-600);
-      white-space: nowrap;
-
-      &:hover {
-        background: var(--asp-blue-050);
-        color: var(--asp-blue-700);
-        text-decoration: none;
-      }
-
-      &.is-active {
-        background: var(--asp-blue-100);
-        color: var(--asp-blue-700);
-      }
-    }
-  }
-
   &__right {
     display: flex;
     align-items: center;
@@ -298,12 +270,6 @@
 }
 
 // --- Responsive --------------------------------------------------------------
-@media (max-width: 1180px) {
-  .topbar__nav {
-    display: none;
-  }
-}
-
 @media (max-width: 900px) {
   .topbar {
     padding: 0 0.9rem;

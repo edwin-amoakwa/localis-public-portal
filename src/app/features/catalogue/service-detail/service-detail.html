@@ -36,11 +36,11 @@
           [routerLink]="['/app/services', svc.slug, 'apply']"
         />
         <p-button
-          label="Back to services"
+          [label]="'Back to ' + (category()?.name ?? 'services')"
           severity="secondary"
           [outlined]="true"
           size="large"
-          routerLink="/app/services"
+          [routerLink]="category() ? ['/app/services/category', category()!.id] : '/app/services'"
         />
       </div>
     </div>

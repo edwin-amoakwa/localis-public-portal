@@ -7,10 +7,10 @@ import { TextareaModule } from 'primeng/textarea';
 import { SelectModule } from 'primeng/select';
 import { AccordionModule } from 'primeng/accordion';
 import { AvatarModule } from 'primeng/avatar';
-import { MessageService } from 'primeng/api';
 import { PortalService } from '../../core/services/portal.service';
 import { AuthService } from '../../core/services/auth.service';
 import { environment } from '../../../environments/environment';
+import { ToastService } from '../../core/services/toast.service';
 
 interface ChatLine {
   from: 'ME' | 'AGENT';
@@ -39,7 +39,7 @@ export class HelpPage {
   private readonly fb = inject(FormBuilder);
   private readonly portal = inject(PortalService);
   private readonly auth = inject(AuthService);
-  private readonly messages = inject(MessageService);
+  private readonly toast = inject(ToastService);
 
   protected readonly env = environment;
   protected readonly user = this.auth.user;
@@ -102,12 +102,7 @@ export class HelpPage {
       this.submitting.set(false);
       this.supportForm.reset({ topic: 'An application', reference: '', message: '' });
 
-      this.messages.add({
-        severity: 'success',
-        summary: 'Support request sent',
-        detail: 'A support officer will respond within one working day.',
-        life: 5000,
-      });
+      this.toast.success('Support request sent', 'A support officer will respond within one working day.');
     }, 800);
   }
 

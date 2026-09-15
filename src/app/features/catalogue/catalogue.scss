@@ -1,0 +1,88 @@
+// Shared by the services page and the category page.
+
+.service-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.service-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 3.5rem;
+  padding: 0.85rem 1.25rem;
+  border-top: 1px solid var(--asp-line);
+  color: var(--asp-ink);
+  text-decoration: none;
+
+  li:first-child & {
+    border-top: 0;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: var(--asp-blue-050);
+    text-decoration: none;
+  }
+
+  &__text {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  &__name {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  &__sub {
+    font-size: 0.85rem;
+    color: var(--asp-ink-500);
+  }
+
+  &__meta {
+    flex: none;
+    font-size: 0.82rem;
+    color: var(--asp-ink-500);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  > .pi-angle-right {
+    flex: none;
+    color: var(--asp-ink-400);
+  }
+}
+
+.cat-icon {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: none;
+  border-radius: 12px;
+  font-size: 1.15rem;
+}
+
+mark {
+  background: var(--asp-gold-100);
+  color: inherit;
+  border-radius: 3px;
+  padding: 0 1px;
+}
+
+// Phones: names only — summaries and processing times live on the details page.
+@media (max-width: 640px) {
+  .service-row {
+    padding: 0.8rem 1rem;
+
+    &__sub--desktop,
+    &__meta {
+      display: none;
+    }
+  }
+}

@@ -1,20 +1,53 @@
-import { Injectable, computed, signal } from '@angular/core';
-import { CURRENT_USER } from '../data/mock.data';
-import { readJson, remove, writeJson } from './storage';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { readJson, writeJson } from './storage';
+import { ApiService } from './api.service';
+import { SessionStore } from './session-store';
 import { AccountType, UserProfile } from '../models';
 
-const STORAGE_KEY = 'asp.session';
+export interface RegistrationDetails {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  ghanaCardNo: string;
+  password: string;
+  confirmPassword: string;
+  /** Portal-only: an Applicant account is not tied to an assembly on the server. */
+  region: string;
+  assembly: string;
+  accountType: AccountType;
+}
+
+/** localis-api's ApplicantResponse. Gson omits null fields, hence the optionals. */
+interface ApplicantResponse {
+  id: string;
+  firstname: string;
+  surname: string;
+  emailAddress?: string;
+  phoneNo: string;
+  ghanaCardNo?: string;
+  residentialAddress?: string;
+  digitalAddress?: string;
+}
+
+interface SessionResponse {
+  token: string;
+  expiresInSeconds: number;
+  user: ApplicantResponse;
+}
+
+/** What the portal remembers per applicant that the server does not hold. */
+type PortalPreferences = Pick<UserProfile, 'region' | 'assembly' | 'accountType'>;
 
 /**
- * Mock authentication.
- *
- * There is no auth server in this build: signing in or registering simply marks
- * the session as authenticated and hands back the demo persona. The session is
- * kept in localStorage so a page refresh does not throw you out mid-demo.
+ * Applicant authentication against localis-api. The bearer token and profile
+ * are kept in localStorage (SessionStore) so a refresh does not sign you out;
+ * authInterceptor attaches the token and signs out on a 401.
  */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly _user = signal<UserProfile | null>(this.restore());
+  private readonly api = inject(ApiService);
+  private readonly _user = signal<UserProfile | null>(SessionStore.read<UserProfile>()?.user ?? null);
 
   readonly user = this._user.asReadonly();
   readonly isAuthenticated = computed(() => this._user() !== null);
@@ -23,50 +56,83 @@ export class AuthService {
     return user ? `${user.firstName} ${user.lastName}` : '';
   });
 
-  /** Any credentials are accepted — this is a UI-only build. */
-  login(email?: string): UserProfile {
-    const user: UserProfile = { ...CURRENT_USER, email: email?.trim() || CURRENT_USER.email };
-    this.persist(user);
-    return user;
+  /** @param identifier phone number or email address. Rejects with the server's error. */
+  async login(identifier: string, password: string): Promise<UserProfile> {
+    const response = await this.api.postAsync<SessionResponse>('/applicants/auth/login', {
+      loginId: identifier.trim(),
+      password,
+    });
+    return this.startSession(response.data!);
   }
 
-  /** Registration takes the details given and drops straight into the app. */
-  register(details: Partial<UserProfile> & { accountType: AccountType }): UserProfile {
-    const first = details.firstName?.trim() || CURRENT_USER.firstName;
-    const last = details.lastName?.trim() || CURRENT_USER.lastName;
+  /** Creates the account (the server texts a welcome SMS) and signs straight in. */
+  async register(details: RegistrationDetails): Promise<UserProfile> {
+    const response = await this.api.postAsync<SessionResponse>('/applicants/auth/register', {
+      firstname: details.firstName.trim(),
+      surname: details.lastName.trim(),
+      emailAddress: details.email.trim() || null,
+      phoneNo: details.phone.trim(),
+      ghanaCardNo: details.ghanaCardNo,
+      password: details.password,
+      confirmPassword: details.confirmPassword,
+    });
 
-    const user: UserProfile = {
-      ...CURRENT_USER,
-      ...details,
-      firstName: first,
-      lastName: last,
-      avatarInitials: (first.charAt(0) + last.charAt(0)).toUpperCase(),
-      memberSince: new Date().toISOString().slice(0, 10),
-    };
-
-    this.persist(user);
-    return user;
+    const session = response.data!;
+    this.savePreferences(session.user.id, {
+      region: details.region,
+      assembly: details.assembly,
+      accountType: details.accountType,
+    });
+    return this.startSession(session);
   }
 
   updateProfile(changes: Partial<UserProfile>): void {
     const current = this._user();
-    if (!current) {
+    const token = SessionStore.token();
+    if (!current || !token) {
       return;
     }
-    this.persist({ ...current, ...changes });
+    const user = { ...current, ...changes };
+    this.savePreferences(user.id, { region: user.region, assembly: user.assembly, accountType: user.accountType });
+    this._user.set(user);
+    SessionStore.write({ token, user });
   }
 
   logout(): void {
     this._user.set(null);
-    remove(STORAGE_KEY);
+    SessionStore.clear();
   }
 
-  private persist(user: UserProfile): void {
+  private startSession(session: SessionResponse): UserProfile {
+    const applicant = session.user;
+    const preferences = readJson<PortalPreferences>(this.preferencesKey(applicant.id));
+
+    const user: UserProfile = {
+      id: applicant.id,
+      firstName: applicant.firstname,
+      lastName: applicant.surname,
+      email: applicant.emailAddress ?? '',
+      phone: applicant.phoneNo,
+      ghanaCardNo: applicant.ghanaCardNo ?? '',
+      region: preferences?.region ?? '',
+      assembly: preferences?.assembly ?? '',
+      accountType: preferences?.accountType ?? 'BUSINESS_OWNER',
+      digitalAddress: applicant.digitalAddress,
+      residentialAddress: applicant.residentialAddress,
+      avatarInitials: (applicant.firstname.charAt(0) + applicant.surname.charAt(0)).toUpperCase(),
+      memberSince: new Date().toISOString().slice(0, 10),
+    };
+
     this._user.set(user);
-    writeJson(STORAGE_KEY, user);
+    SessionStore.write({ token: session.token, user });
+    return user;
   }
 
-  private restore(): UserProfile | null {
-    return readJson<UserProfile>(STORAGE_KEY);
+  private savePreferences(applicantId: string, preferences: PortalPreferences): void {
+    writeJson(this.preferencesKey(applicantId), preferences);
+  }
+
+  private preferencesKey(applicantId: string): string {
+    return `asp.preferences.${applicantId}`;
   }
 }

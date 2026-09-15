@@ -158,72 +158,6 @@
   }
 }
 
-// --- Comments ----------------------------------------------------------------
-.comment-card blockquote {
-  margin: 0;
-  padding: 1rem 1.2rem;
-  border-left: 3px solid var(--asp-blue-700);
-  background: var(--asp-blue-050);
-  border-radius: 0 var(--asp-radius-sm) var(--asp-radius-sm) 0;
-
-  p {
-    margin: 0 0 0.5rem;
-    font-size: 0.93rem;
-  }
-
-  cite {
-    font-size: 0.8rem;
-    color: var(--asp-ink-400);
-    font-style: normal;
-  }
-}
-
-// --- Documents ---------------------------------------------------------------
-.doc-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-
-  li {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--asp-line);
-
-    &:last-child {
-      border-bottom: 0;
-    }
-  }
-
-  &__icon {
-    width: 36px;
-    height: 36px;
-    flex: none;
-    border-radius: 10px;
-    display: grid;
-    place-items: center;
-    background: var(--asp-blue-100);
-    color: var(--asp-blue-700);
-  }
-
-  &__body {
-    flex: 1;
-    min-width: 0;
-
-    strong {
-      display: block;
-      font-size: 0.9rem;
-      word-break: break-word;
-    }
-
-    small {
-      font-size: 0.78rem;
-      color: var(--asp-ink-400);
-    }
-  }
-}
-
 // --- Payment -----------------------------------------------------------------
 .pay-figures {
   display: grid;
@@ -312,6 +246,162 @@
     color: var(--asp-gold-600);
     display: block;
     margin-bottom: 0.75rem;
+  }
+}
+
+// --- Status banner -----------------------------------------------------------
+.status-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  margin: 0 0 1rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--asp-radius-sm);
+  font-size: 0.9rem;
+  line-height: 1.5;
+
+  i {
+    font-size: 1.1rem;
+    margin-top: 2px;
+  }
+
+  &--info {
+    background: var(--asp-blue-050);
+    color: var(--asp-blue-700);
+  }
+
+  &--gold {
+    background: var(--asp-gold-100);
+    color: var(--asp-gold-700);
+  }
+
+  &--green {
+    background: var(--asp-green-100);
+    color: var(--asp-green-700);
+  }
+}
+
+// --- Business ----------------------------------------------------------------
+.kyc-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem 1.5rem;
+  margin: 0;
+
+  > div {
+    min-width: 0;
+  }
+
+  &__wide {
+    grid-column: 1 / -1;
+  }
+
+  dt {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--asp-ink-400);
+    margin-bottom: 0.15rem;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 600;
+    word-break: break-word;
+  }
+}
+
+// --- Receipts & permit -------------------------------------------------------
+.receipt {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  margin-bottom: 0.75rem;
+  border-top: 1px solid var(--asp-line);
+
+  small {
+    display: block;
+    font-size: 0.77rem;
+    color: var(--asp-ink-400);
+    margin-top: 2px;
+  }
+
+  &__amount {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.3rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+}
+
+.permit-card {
+  border-top: 4px solid var(--asp-green-600, #0e9f6e);
+
+  h2 i {
+    color: var(--asp-green-700);
+    margin-right: 0.3rem;
+  }
+}
+
+// --- Mobile Money dialog -----------------------------------------------------
+.pay-form {
+  &__amount {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    margin-bottom: 1.1rem;
+    border-radius: var(--asp-radius-sm);
+    background: var(--asp-blue-050);
+    text-align: center;
+
+    span {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--asp-ink-400);
+    }
+
+    strong {
+      font-size: 1.7rem;
+      color: var(--asp-blue-700);
+      font-variant-numeric: tabular-nums;
+    }
+
+    small {
+      color: var(--asp-ink-400);
+    }
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+
+    label {
+      font-size: 0.86rem;
+      font-weight: 650;
+    }
+  }
+
+  .req,
+  .field-error {
+    color: #c0342c;
+  }
+
+  .field-error {
+    font-size: 0.8rem;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
   }
 }
 

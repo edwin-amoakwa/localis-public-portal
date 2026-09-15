@@ -15,19 +15,19 @@ export const routes: Routes = [
     pathMatch: 'full',
     title: 'Sign in' + SUFFIX,
     canActivate: [guestGuard],
-    loadComponent: () => import('./features/auth/login/login').then((m) => m.LoginPage),
+    loadComponent: () => import('./auth/login/login').then((m) => m.LoginPage),
   },
   {
     path: 'login',
     title: 'Sign in' + SUFFIX,
     canActivate: [guestGuard],
-    loadComponent: () => import('./features/auth/login/login').then((m) => m.LoginPage),
+    loadComponent: () => import('./auth/login/login').then((m) => m.LoginPage),
   },
   {
     path: 'register',
     title: 'Create an account' + SUFFIX,
     canActivate: [guestGuard],
-    loadComponent: () => import('./features/auth/register/register').then((m) => m.RegisterPage),
+    loadComponent: () => import('./auth/register/register').then((m) => m.RegisterPage),
   },
 
   // --- Signed-in application ------------------------------------------------
@@ -47,6 +47,14 @@ export const routes: Routes = [
         title: 'Available services' + SUFFIX,
         loadComponent: () =>
           import('./features/catalogue/service-list/service-list').then((m) => m.ServiceListPage),
+      },
+      {
+        path: 'services/category/:categoryId',
+        title: 'Services' + SUFFIX,
+        loadComponent: () =>
+          import('./features/catalogue/service-category/service-category').then(
+            (m) => m.ServiceCategoryPage,
+          ),
       },
       {
         path: 'services/:slug',

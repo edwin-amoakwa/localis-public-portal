@@ -8,10 +8,13 @@ import { describe, expect, it, beforeEach } from 'vitest';
 
 import { routes } from './app.routes';
 import { AspPreset } from './core/theme/asp-preset';
-import { AuthService } from './core/services/auth.service';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { SessionStore } from './core/services/session-store';
+import { CURRENT_USER } from './core/data/mock.data';
 
-import { LoginPage } from './features/auth/login/login';
-import { RegisterPage } from './features/auth/register/register';
+import { LoginPage } from './auth/login/login';
+import { RegisterPage } from './auth/register/register';
 import { DashboardPage } from './features/dashboard/dashboard';
 import { ServiceListPage } from './features/catalogue/service-list/service-list';
 import { ServiceDetailPage } from './features/catalogue/service-detail/service-detail';
@@ -42,6 +45,8 @@ describe('ASP pages render', () => {
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
         provideRouter(routes),
         provideNoopAnimations(),
         providePrimeNG({ theme: { preset: AspPreset } }),
@@ -50,8 +55,8 @@ describe('ASP pages render', () => {
       ],
     });
 
-    // Every signed-in page assumes a session.
-    TestBed.inject(AuthService).login();
+    // Every signed-in page assumes a session; API calls go to the testing backend and never resolve.
+    SessionStore.write({ token: 'test-token', user: CURRENT_USER });
   });
 
   const pages: [string, unknown][] = [

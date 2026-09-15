@@ -161,6 +161,7 @@ export const SERVICES: AssemblyService[] = [
     needsPropertyInfo: false,
     requiresInspection: false,
     popular: true,
+    isRenewal: true,
   },
   {
     id: 'svc-temp-permit',

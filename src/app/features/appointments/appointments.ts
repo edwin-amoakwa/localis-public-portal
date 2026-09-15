@@ -3,10 +3,10 @@ import { DatePipe, LowerCasePipe } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { TabsModule } from 'primeng/tabs';
-import { MessageService } from 'primeng/api';
 import { PortalService } from '../../core/services/portal.service';
 import { Severity } from '../../core/services/ui.service';
 import { Appointment, AppointmentKind } from '../../core/models';
+import { ToastService } from '../../core/services/toast.service';
 
 interface CalendarCell {
   date: Date | null;
@@ -27,7 +27,7 @@ interface CalendarCell {
 })
 export class AppointmentsPage {
   private readonly portal = inject(PortalService);
-  private readonly messages = inject(MessageService);
+  private readonly toast = inject(ToastService);
 
   protected readonly all = this.portal.appointments;
   protected readonly upcoming = this.portal.upcomingAppointments;
@@ -110,12 +110,7 @@ export class AppointmentsPage {
   }
 
   protected addToCalendar(appointment: Appointment): void {
-    this.messages.add({
-      severity: 'info',
-      summary: 'Demonstration build',
-      detail: `In the live portal this adds “${appointment.title}” to your calendar.`,
-      life: 4000,
-    });
+    this.toast.info('Demonstration build', `In the live portal this adds “${appointment.title}” to your calendar.`);
   }
 
   private isoDate(date: Date): string {

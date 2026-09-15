@@ -55,8 +55,54 @@
   }
 }
 
+.form-grid__heading {
+  grid-column: 1 / -1;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--asp-ink-400);
+  margin: 0.6rem 0 -0.3rem;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
 .req {
   color: #c0342c;
+}
+
+.hint {
+  font-weight: 400;
+  color: var(--asp-ink-400);
+}
+
+// --- Toggle chips (nature of business, regional presence) --------------------
+.chip-toggle-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chip-toggle {
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--asp-line);
+  border-radius: 999px;
+  background: var(--asp-card);
+  color: var(--asp-ink);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--asp-blue-500);
+  }
+
+  &.is-selected {
+    border-color: var(--asp-blue-700);
+    background: var(--asp-blue-700);
+    color: #fff;
+  }
 }
 
 .field-error {
@@ -183,6 +229,11 @@
   font-size: 0.85rem;
   line-height: 1.45;
   margin: 0 0 1rem;
+
+  &--warn {
+    background: #fbeaea;
+    color: #a3352c;
+  }
 }
 
 // --- Review ------------------------------------------------------------------

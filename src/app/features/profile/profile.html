@@ -7,7 +7,7 @@
 
 <!-- Identity card ---------------------------------------------------------- -->
 <section class="asp-card identity">
-  <p-avatar [label]="user()?.avatarInitials" shape="circle" styleClass="identity__avatar" />
+  <p-avatar [label]="user()?.avatarInitials" shape="circle" class="identity__avatar" />
   <div class="identity__body">
     <h2>{{ user()?.firstName }} {{ user()?.lastName }}</h2>
     <p>{{ user()?.email }} &middot; {{ user()?.phone }}</p>
@@ -107,7 +107,7 @@
               <p-tag
                 [value]="business.status === 'ACTIVE' ? 'Active' : 'Inactive'"
                 [severity]="business.status === 'ACTIVE' ? 'success' : 'secondary'"
-                styleClass="text-tiny"
+                class="text-tiny"
               />
             </header>
             <h3>{{ business.businessName }}</h3>
@@ -194,7 +194,7 @@
               formControlName="current"
               [feedback]="false"
               [toggleMask]="true"
-              styleClass="w-full"
+              class="w-full"
               [inputStyle]="{ width: '100%' }"
             />
           </div>
@@ -204,7 +204,7 @@
               inputId="next"
               formControlName="next"
               [toggleMask]="true"
-              styleClass="w-full"
+              class="w-full"
               [inputStyle]="{ width: '100%' }"
             />
           </div>
@@ -215,7 +215,7 @@
               formControlName="confirm"
               [feedback]="false"
               [toggleMask]="true"
-              styleClass="w-full"
+              class="w-full"
               [inputStyle]="{ width: '100%' }"
             />
           </div>

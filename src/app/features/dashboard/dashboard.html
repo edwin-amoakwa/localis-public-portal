@@ -128,8 +128,8 @@
       <a routerLink="/app/applications">View all</a>
     </header>
 
-    <p-table [value]="recent()" styleClass="p-datatable-sm" responsiveLayout="scroll">
-      <ng-template pTemplate="header">
+    <p-table [value]="recent()" size="small" responsiveLayout="scroll">
+      <ng-template #header>
         <tr>
           <th>Application</th>
           <th>Service</th>
@@ -138,7 +138,7 @@
           <th></th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-app>
+      <ng-template #body let-app>
         <tr>
           <td>
             <a [routerLink]="['/app/applications', app.id]" class="mono">{{
@@ -152,7 +152,7 @@
             <p-tag
               [value]="statusLabel(app.status)"
               [severity]="statusSeverity(app.status)"
-              styleClass="text-tiny"
+              class="text-tiny"
             />
           </td>
           <td class="text-right">
@@ -162,7 +162,7 @@
           </td>
         </tr>
       </ng-template>
-      <ng-template pTemplate="emptymessage">
+      <ng-template #emptymessage>
         <tr>
           <td colspan="5" class="text-center section-muted">You have no applications yet.</td>
         </tr>

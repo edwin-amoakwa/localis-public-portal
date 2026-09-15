@@ -3,9 +3,9 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { TextareaModule } from 'primeng/textarea';
 import { AvatarModule } from 'primeng/avatar';
-import { MessageService } from 'primeng/api';
 import { PortalService } from '../../core/services/portal.service';
 import { AuthService } from '../../core/services/auth.service';
+import { ToastService } from '../../core/services/toast.service';
 
 /** A simple inbox: threads on the left, the conversation on the right. */
 @Component({
@@ -17,7 +17,7 @@ import { AuthService } from '../../core/services/auth.service';
 export class MessagesPage {
   private readonly portal = inject(PortalService);
   private readonly auth = inject(AuthService);
-  private readonly messages = inject(MessageService);
+  private readonly toast = inject(ToastService);
 
   protected readonly threads = this.portal.threads;
   protected readonly user = this.auth.user;
@@ -53,12 +53,7 @@ export class MessagesPage {
     this.portal.replyToThread(thread.id, body);
     this.draft.set('');
 
-    this.messages.add({
-      severity: 'success',
-      summary: 'Reply sent',
-      detail: `Your message has been sent to ${thread.officer}.`,
-      life: 3000,
-    });
+    this.toast.success('Reply sent', `Your message has been sent to ${thread.officer}.`);
   }
 
   protected initials(author: string): string {

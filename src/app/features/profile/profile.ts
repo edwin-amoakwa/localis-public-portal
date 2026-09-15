@@ -8,10 +8,10 @@ import { TabsModule } from 'primeng/tabs';
 import { TagModule } from 'primeng/tag';
 import { AvatarModule } from 'primeng/avatar';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { MessageService } from 'primeng/api';
 import { AuthService } from '../../core/services/auth.service';
 import { PortalService } from '../../core/services/portal.service';
 import { UiService } from '../../core/services/ui.service';
+import { ToastService } from '../../core/services/toast.service';
 
 /** Personal details, businesses, properties, security and notification prefs. */
 @Component({
@@ -35,7 +35,7 @@ import { UiService } from '../../core/services/ui.service';
 export class ProfilePage {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
-  private readonly messages = inject(MessageService);
+  private readonly toast = inject(ToastService);
   protected readonly portal = inject(PortalService);
   protected readonly ui = inject(UiService);
 
@@ -99,12 +99,7 @@ export class ProfilePage {
       });
 
       this.savingProfile.set(false);
-      this.messages.add({
-        severity: 'success',
-        summary: 'Profile updated',
-        detail: 'Your details have been saved.',
-        life: 3000,
-      });
+      this.toast.success('Profile updated', 'Your details have been saved.');
     }, 700);
   }
 
@@ -117,12 +112,7 @@ export class ProfilePage {
     }
 
     if (next !== confirm) {
-      this.messages.add({
-        severity: 'warn',
-        summary: 'Passwords do not match',
-        detail: 'The new password and its confirmation must be identical.',
-        life: 3500,
-      });
+      this.toast.warn('Passwords do not match', 'The new password and its confirmation must be identical.');
       return;
     }
 
@@ -131,12 +121,7 @@ export class ProfilePage {
     setTimeout(() => {
       this.savingPassword.set(false);
       this.passwordForm.reset();
-      this.messages.add({
-        severity: 'success',
-        summary: 'Password changed',
-        detail: 'Use your new password the next time you sign in.',
-        life: 3500,
-      });
+      this.toast.success('Password changed', 'Use your new password the next time you sign in.');
     }, 700);
   }
 
@@ -147,11 +132,7 @@ export class ProfilePage {
       pushNotifications: key === 'push' ? value : this.ui.prefs().pushNotifications,
     });
 
-    this.messages.add({
-      severity: 'success',
-      summary: 'Preference saved',
-      life: 2000,
-    });
+    this.toast.success('Preference saved');
   }
 
   protected accountTypeLabel(): string {
