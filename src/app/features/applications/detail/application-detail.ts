@@ -90,6 +90,11 @@ export class ApplicationDetailPage {
     return [...accounts].sort((a, b) => Number(b.accountType === 'MOBILE_MONEY') - Number(a.accountType === 'MOBILE_MONEY'));
   });
 
+  /** The wallet the Mobile Money dialog actually pays into, when the assembly has one. */
+  protected readonly momoAccount = computed(
+    () => this.paymentAccounts().find((account) => account.accountType === 'MOBILE_MONEY') ?? null,
+  );
+
   protected accountIcon(type: string): string {
     return { MOBILE_MONEY: 'pi pi-mobile', BANK: 'pi pi-building-columns', CASH: 'pi pi-wallet' }[type] ?? 'pi pi-wallet';
   }

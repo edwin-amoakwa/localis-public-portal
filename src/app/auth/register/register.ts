@@ -8,22 +8,14 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { SelectModule } from 'primeng/select';
 import { AuthService } from '../../core/services/auth.service';
 import { PortalService } from '../../core/services/portal.service';
-import { AccountType } from '../../core/models';
+import { LookupAssembly, LookupRegion, PermitService } from '../../core/services/permit.service';
 import { PHONE_PATTERN } from '../../core/utils/identifier';
 import { ToastService } from '../../core/services/toast.service';
 
-interface AccountTypeOption {
-  value: AccountType;
-  label: string;
-  description: string;
-  icon: string;
-}
-
 /**
- * Registration, live against localis-api: the account is created on the
- * server, which texts the welcome SMS. Region, assembly and account type stay
- * portal-side for now — the server's Applicant is deliberately not tied to an
- * assembly.
+ * Registration, live against localis-api: the account is created on the server,
+ * which texts the welcome SMS and puts the applicant on the chosen Assembly's
+ * list. The account itself is national, so it works with every Assembly.
  */
 @Component({
   selector: 'app-register',
@@ -43,40 +35,14 @@ export class RegisterPage {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly portal = inject(PortalService);
+  private readonly permits = inject(PermitService);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
 
   protected readonly submitting = signal(false);
-  protected readonly accountType = signal<AccountType>('BUSINESS_OWNER');
-
-  protected readonly accountTypes: AccountTypeOption[] = [
-    {
-      value: 'CITIZEN',
-      label: 'Citizen',
-      description: 'Request services, make payments and report community issues.',
-      icon: 'pi pi-user',
-    },
-    {
-      value: 'BUSINESS_OWNER',
-      label: 'Business Owner',
-      description: 'Apply for operating permits, renew licences and pay fees.',
-      icon: 'pi pi-briefcase',
-    },
-    {
-      value: 'PROPERTY_OWNER',
-      label: 'Property Owner',
-      description: 'Pay property rates and view your property records.',
-      icon: 'pi pi-home',
-    },
-    {
-      value: 'ORGANISATION',
-      label: 'Organisation',
-      description: 'Act on behalf of a company, NGO or institution.',
-      icon: 'pi pi-building',
-    },
-  ];
-
-  protected readonly regions = this.portal.regions.map((r) => r.name);
+  /** Regions and their assemblies come from localis-api. */
+  protected readonly regions = signal<LookupRegion[]>([]);
+  protected readonly assemblies = signal<LookupAssembly[]>([]);
 
   protected readonly form = this.fb.nonNullable.group(
     {
@@ -102,14 +68,16 @@ export class RegisterPage {
     },
   );
 
-  /** Assemblies depend on the region chosen, so the list is derived. */
-  protected readonly assemblies = signal<string[]>([]);
-
   protected readonly passwordMismatch = computed(() => false);
 
   constructor() {
-    this.form.controls.region.valueChanges.subscribe((region) => {
-      const match = this.portal.regions.find((r) => r.name === region);
+    this.permits
+      .regions()
+      .then((regions) => this.regions.set(regions.filter((r) => r.assemblies.length > 0)))
+      .catch((error) => this.toast.error('Could not load the list of Assemblies', error));
+
+    this.form.controls.region.valueChanges.subscribe((regionId) => {
+      const match = this.regions().find((r) => r.id === regionId);
       this.assemblies.set(match?.assemblies ?? []);
 
       const control = this.form.controls.assembly;
@@ -122,8 +90,12 @@ export class RegisterPage {
     });
   }
 
-  protected chooseType(type: AccountType): void {
-    this.accountType.set(type);
+  private regionName(regionId: string): string {
+    return this.regions().find((r) => r.id === regionId)?.regionName ?? '';
+  }
+
+  private assemblyName(assemblyId: string): string {
+    return this.assemblies().find((a) => a.id === assemblyId)?.assemblyName ?? '';
   }
 
   protected submit(): void {
@@ -145,9 +117,9 @@ export class RegisterPage {
         ghanaCardNo: value.ghanaCardNo.toUpperCase(),
         password: value.password,
         confirmPassword: value.confirmPassword,
-        region: value.region,
-        assembly: value.assembly,
-        accountType: this.accountType(),
+        region: this.regionName(value.region),
+        assembly: this.assemblyName(value.assembly),
+        assemblyId: value.assembly,
       })
       .then((user) => {
         this.portal.sendRegistrationConfirmation(user);

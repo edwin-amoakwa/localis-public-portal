@@ -98,6 +98,12 @@
   margin-bottom: 0.9rem;
 }
 
+// PrimeNG 22 drops styleClass, so the aside stretches its own buttons.
+.detail-aside p-button,
+.detail-aside ::ng-deep .p-button {
+  width: 100%;
+}
+
 // --- Timeline ----------------------------------------------------------------
 ::ng-deep .app-timeline {
   .p-timeline-event-opposite {
@@ -503,5 +509,16 @@
 
   &__note {
     font-style: italic;
+  }
+
+  // On the payment card it is reference material, so it sits back from the figures.
+  &--card {
+    margin: 1rem 0 1.1rem;
+    padding-top: 0.9rem;
+    border-top: 1px dashed var(--asp-line);
+
+    .means__lede .mono {
+      color: var(--asp-blue-700);
+    }
   }
 }

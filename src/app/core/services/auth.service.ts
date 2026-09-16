@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { readJson, writeJson } from './storage';
 import { ApiService } from './api.service';
 import { SessionStore } from './session-store';
-import { AccountType, UserProfile } from '../models';
+import { UserProfile } from '../models';
 
 export interface RegistrationDetails {
   firstName: string;
@@ -12,10 +12,10 @@ export interface RegistrationDetails {
   ghanaCardNo: string;
   password: string;
   confirmPassword: string;
-  /** Portal-only: an Applicant account is not tied to an assembly on the server. */
+  /** The district chosen at sign-up; the server lists the applicant under it. */
   region: string;
   assembly: string;
-  accountType: AccountType;
+  assemblyId: string;
 }
 
 /** localis-api's ApplicantResponse. Gson omits null fields, hence the optionals. */
@@ -73,6 +73,7 @@ export class AuthService {
       emailAddress: details.email.trim() || null,
       phoneNo: details.phone.trim(),
       ghanaCardNo: details.ghanaCardNo,
+      assemblyId: details.assemblyId,
       password: details.password,
       confirmPassword: details.confirmPassword,
     });
@@ -81,7 +82,7 @@ export class AuthService {
     this.savePreferences(session.user.id, {
       region: details.region,
       assembly: details.assembly,
-      accountType: details.accountType,
+      accountType: 'BUSINESS_OWNER',
     });
     return this.startSession(session);
   }

@@ -181,8 +181,35 @@
             </div>
           }
 
+          @if (app.outstandingAmount > 0 && paymentAccounts().length) {
+            <section class="means means--card">
+              <h3>Payment means</h3>
+              <p class="means__lede">
+                {{ app.assembly.assemblyName }} accepts payment through the accounts below. Quote
+                <strong class="mono">{{ invoice.invoiceNumber }}</strong> as your reference.
+              </p>
+              <ul>
+                @for (account of paymentAccounts(); track account.id) {
+                  <li>
+                    <i [class]="accountIcon(account.accountType)" aria-hidden="true"></i>
+                    <span>
+                      <strong>{{ account.accountTypeLabel }}</strong>
+                      @if (account.accountNumber) {
+                        <span class="means__number">{{ account.accountNumber }}</span>
+                      }
+                      <small>{{ account.accountName }}@if (account.providerName) { · {{ account.providerName }}}</small>
+                      @if (account.instructions) {
+                        <small class="means__note">{{ account.instructions }}</small>
+                      }
+                    </span>
+                  </li>
+                }
+              </ul>
+            </section>
+          }
+
           @if (app.status === 'AWAITING_PAYMENT') {
-            <p-button label="Pay with Mobile Money" icon="pi pi-mobile" styleClass="w-full" (onClick)="openPay()" />
+            <p-button label="Pay with Mobile Money" icon="pi pi-mobile" (onClick)="openPay()" />
           }
         } @else {
           <p class="section-muted mb-0">
@@ -205,7 +232,6 @@
             label="View / print permit"
             icon="pi pi-file-pdf"
             severity="success"
-            styleClass="w-full"
             [loading]="loadingPermit()"
             (onClick)="viewPermit()"
           />
@@ -231,26 +257,20 @@
         <small>{{ app.invoice?.invoiceNumber }} · {{ app.business.businessName }}</small>
       </div>
 
-      @if (paymentAccounts().length) {
+      @if (momoAccount(); as account) {
         <section class="means">
-          <h3>Payment means</h3>
-          <p class="means__lede">{{ app.assembly.assemblyName }} accepts payment through:</p>
+          <h3>Paying into</h3>
           <ul>
-            @for (account of paymentAccounts(); track account.id) {
-              <li>
-                <i [class]="accountIcon(account.accountType)" aria-hidden="true"></i>
-                <span>
-                  <strong>{{ account.accountTypeLabel }}</strong>
-                  @if (account.accountNumber) {
-                    <span class="means__number">{{ account.accountNumber }}</span>
-                  }
-                  <small>{{ account.accountName }}@if (account.providerName) { · {{ account.providerName }}}</small>
-                  @if (account.instructions) {
-                    <small class="means__note">{{ account.instructions }}</small>
-                  }
-                </span>
-              </li>
-            }
+            <li>
+              <i [class]="accountIcon(account.accountType)" aria-hidden="true"></i>
+              <span>
+                <strong>{{ account.accountName }}</strong>
+                @if (account.accountNumber) {
+                  <span class="means__number">{{ account.accountNumber }}</span>
+                }
+                <small>{{ account.accountTypeLabel }}@if (account.providerName) { · {{ account.providerName }}}</small>
+              </span>
+            </li>
           </ul>
         </section>
       }

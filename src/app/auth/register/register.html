@@ -40,30 +40,6 @@
       <h1>Create your account</h1>
       <p>It takes a couple of minutes. You will need your Ghana Card number.</p>
 
-      <!-- Account type ------------------------------------------------------ -->
-      <fieldset style="border: 0; padding: 0; margin: 0 0 0.5rem">
-        <legend style="font-size: 0.87rem; font-weight: 650; padding: 0; margin-bottom: 0.5rem">
-          What kind of account do you need?
-        </legend>
-        <div class="type-grid">
-          @for (type of accountTypes; track type.value) {
-            <button
-              type="button"
-              class="type-card"
-              [class.is-selected]="accountType() === type.value"
-              [attr.aria-pressed]="accountType() === type.value"
-              (click)="chooseType(type.value)"
-            >
-              <i [class]="type.icon" aria-hidden="true"></i>
-              <span>
-                <strong>{{ type.label }}</strong>
-                <small>{{ type.description }}</small>
-              </span>
-            </button>
-          }
-        </div>
-      </fieldset>
-
       <!-- Personal details -------------------------------------------------- -->
       <div class="field-row">
         <div class="field">
@@ -134,7 +110,9 @@
           <p-select
             inputId="region"
             formControlName="region"
-            [options]="regions"
+            [options]="regions()"
+            optionLabel="regionName"
+            optionValue="id"
             placeholder="Select your region"
             class="w-full"
             appendTo="body"
@@ -149,6 +127,8 @@
             inputId="assembly"
             formControlName="assembly"
             [options]="assemblies()"
+            optionLabel="assemblyName"
+            optionValue="id"
             placeholder="Select your Assembly"
             class="w-full"
             appendTo="body"

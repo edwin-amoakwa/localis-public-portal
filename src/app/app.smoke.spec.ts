@@ -99,11 +99,12 @@ describe('ASP pages render', () => {
     expect(fixture.nativeElement.textContent).toContain('Applicant information');
   });
 
-  it('ApplicationDetailPage mounts for a known application', () => {
+  // The page fetches the application, so all it can show synchronously is the wait.
+  it('ApplicationDetailPage mounts and waits for the server', () => {
     const fixture = TestBed.createComponent(ApplicationDetailPage);
     fixture.componentRef.setInput('id', 'app-001');
     fixture.detectChanges();
-    expect(fixture.nativeElement.textContent).toContain('ASP-2026-000124');
+    expect(fixture.nativeElement.textContent).toContain('Loading application');
   });
 
   it('PayPage mounts for an outstanding invoice', () => {
