@@ -308,22 +308,10 @@
       @if (currentStep() === 'details') {
         <h2>Application details</h2>
         <p class="section-muted">
-          A short subject helps you find this application again, and helps the officer handling it.
+          Both are optional — add them only if they apply.
         </p>
 
         <form [formGroup]="detailForm" class="form-grid">
-          <div class="field field--full">
-            <label for="subject">Subject <span class="req">*</span></label>
-            <input
-              pInputText
-              id="subject"
-              formControlName="subject"
-              placeholder="e.g. Akosua’s Kitchen — 2026 renewal"
-            />
-            @if (detailForm.controls.subject.touched && detailForm.controls.subject.invalid) {
-              <small class="field-error">Give this application a short subject.</small>
-            }
-          </div>
           <div class="field">
             <label for="preferred">Preferred start date</label>
             <p-datepicker
@@ -453,7 +441,6 @@
         <section class="review-block">
           <h3>Details</h3>
           <dl>
-            <div><dt>Subject</dt><dd>{{ detailForm.value.subject }}</dd></div>
             <div>
               <dt>Preferred date</dt>
               <dd>{{ detailForm.value.preferredDate ? (detailForm.value.preferredDate) : 'Not specified' }}</dd>

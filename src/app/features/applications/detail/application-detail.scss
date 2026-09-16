@@ -435,3 +435,73 @@
     gap: 0.5rem;
   }
 }
+
+// --- Payment means (assembly's accounts) --------------------------------------
+.means {
+  margin-bottom: 1.1rem;
+
+  h3 {
+    margin: 0 0 0.15rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--asp-ink-500);
+  }
+
+  &__lede {
+    margin: 0 0 0.6rem;
+    font-size: 0.85rem;
+    color: var(--asp-ink-500);
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--asp-line);
+    border-radius: var(--asp-radius-sm);
+    background: var(--asp-surface);
+
+    > i {
+      margin-top: 2px;
+      color: var(--asp-blue-700);
+    }
+
+    span {
+      min-width: 0;
+      display: grid;
+      gap: 1px;
+    }
+
+    strong {
+      font-size: 0.88rem;
+    }
+
+    small {
+      font-size: 0.78rem;
+      color: var(--asp-ink-500);
+    }
+  }
+
+  &__number {
+    font-size: 1.02rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--asp-blue-700);
+    letter-spacing: 0.02em;
+  }
+
+  &__note {
+    font-style: italic;
+  }
+}

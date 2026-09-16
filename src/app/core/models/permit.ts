@@ -89,6 +89,18 @@ export interface PermitPayment {
   confirmed: boolean;
 }
 
+export interface PaymentAccount {
+  id: string;
+  /** MOBILE_MONEY, BANK or CASH. */
+  accountType: 'MOBILE_MONEY' | 'BANK' | 'CASH';
+  accountTypeLabel: string;
+  accountName: string;
+  accountNumber?: string;
+  providerName?: string;
+  instructions?: string;
+  active: boolean;
+}
+
 export interface PermitEvent {
   eventDate: string;
   fromStatus?: PermitApplicationStatus;
@@ -131,6 +143,8 @@ export interface PermitApplicationRecord {
   invoice?: PermitInvoice;
   payments?: PermitPayment[];
   trail?: PermitEvent[];
+  /** The assembly's payment means, for the pay screen. */
+  paymentAccounts?: PaymentAccount[];
   permit?: IssuedPermit;
   /** Staff only. */
   suggestedFee?: number;

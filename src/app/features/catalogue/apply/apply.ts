@@ -154,7 +154,6 @@ export class ApplyPage {
   });
 
   protected readonly detailForm = this.fb.nonNullable.group({
-    subject: ['', [Validators.required, Validators.minLength(4)]],
     preferredDate: [null as Date | null],
     notes: [''],
   });
@@ -461,7 +460,7 @@ export class ApplyPage {
 
       const application = this.portal.submitApplication(
         service,
-        this.detailForm.controls.subject.value,
+        this.mockSubject(service.name),
         this.uploads().map((u) => u.name),
         businessId,
       );
@@ -474,6 +473,13 @@ export class ApplyPage {
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }, 900);
+  }
+
+  /** Mock services still title an application; the live one is identified by its number. */
+  private mockSubject(serviceName: string): string {
+    const business = this.businessForm.value.businessName?.trim();
+    const property = this.propertyForm.value.description?.trim();
+    return [business || property, serviceName].filter(Boolean).join(' — ');
   }
 
   private async submitLive(): Promise<void> {

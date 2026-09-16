@@ -84,6 +84,16 @@ export class ApplicationDetailPage {
   protected readonly home: MenuItem = { icon: 'pi pi-home', routerLink: '/app/dashboard' };
   protected readonly severity = permitStatusSeverity;
 
+  /** The assembly's Mobile Money wallet leads, since that is how the portal pays. */
+  protected readonly paymentAccounts = computed(() => {
+    const accounts = this.application()?.paymentAccounts ?? [];
+    return [...accounts].sort((a, b) => Number(b.accountType === 'MOBILE_MONEY') - Number(a.accountType === 'MOBILE_MONEY'));
+  });
+
+  protected accountIcon(type: string): string {
+    return { MOBILE_MONEY: 'pi pi-mobile', BANK: 'pi pi-building-columns', CASH: 'pi pi-wallet' }[type] ?? 'pi pi-wallet';
+  }
+
   constructor() {
     effect(() => {
       this.load(this.id());
